@@ -113,6 +113,21 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
             blisterCanvas.configure(med.getRows(), med.getCols(), med.getBlisterType(), med.getSlotsArray());
 
+            // Highlight next pill to be taken today with a subtle thin border
+            int nextSlotToTake = -1;
+            String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+            com.agustin.pillscheck.util.PreferenceHelper prefs = new com.agustin.pillscheck.util.PreferenceHelper(context);
+            if (!prefs.isTakenForDate(todayStr)) {
+                boolean[] slots = med.getSlotsArray();
+                for (int i = slots.length - 1; i >= 0; i--) {
+                    if (slots[i]) {
+                        nextSlotToTake = i;
+                        break;
+                    }
+                }
+            }
+            blisterCanvas.setHighlightedSlotIndex(nextSlotToTake);
+
             blisterCanvas.setOnSlotClickListener((slotIndex, isFilled, remainingCount) -> {
                 boolean[] currentSlots = blisterCanvas.getSlotStates();
                 med.setSlotsArray(currentSlots);

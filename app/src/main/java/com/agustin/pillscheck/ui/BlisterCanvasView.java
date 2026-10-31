@@ -25,6 +25,7 @@ public class BlisterCanvasView extends View {
     private int cols = 5;
     private boolean[] slotStates = new boolean[10];
     private String blisterType = "silver_round_blue";
+    private int highlightedSlotIndex = -1;
     private OnSlotClickListener listener;
 
     private final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -87,6 +88,15 @@ public class BlisterCanvasView extends View {
         }
         requestLayout();
         invalidate();
+    }
+
+    public void setHighlightedSlotIndex(int index) {
+        this.highlightedSlotIndex = index;
+        invalidate();
+    }
+
+    public int getHighlightedSlotIndex() {
+        return highlightedSlotIndex;
     }
 
     public boolean isFolcresStaggered() {
@@ -246,7 +256,8 @@ public class BlisterCanvasView extends View {
                 slotRadius[slotIndex] = radius;
 
                 boolean isFilled = slotStates[slotIndex];
-                drawRoundSlot(canvas, x, y, radius, isFilled);
+                boolean isHighlighted = (slotIndex == highlightedSlotIndex);
+                drawRoundSlot(canvas, x, y, radius, isFilled, isHighlighted);
                 slotIndex++;
             }
         }
@@ -276,23 +287,24 @@ public class BlisterCanvasView extends View {
                 slotY[index] = cy;
 
                 boolean isFilled = slotStates[index];
+                boolean isHighlighted = (index == highlightedSlotIndex);
 
                 if ("silver_capsule_yellow".equals(blisterType)) {
                     // Vertical elongated capsule (standing upright: height > width)
                     float capW = Math.min(dpToPx(16), cellW * 0.35f);
                     float capH = Math.min(dpToPx(32), cellH * 0.78f);
                     slotRadius[index] = capH / 2f;
-                    drawCapsuleSlot(canvas, cx, cy, capW, capH, isFilled);
+                    drawCapsuleSlot(canvas, cx, cy, capW, capH, isFilled, isHighlighted);
                 } else {
                     float radius = Math.min(cellW * 0.36f, cellH * 0.38f);
                     slotRadius[index] = radius;
-                    drawRoundSlot(canvas, cx, cy, radius, isFilled);
+                    drawRoundSlot(canvas, cx, cy, radius, isFilled, isHighlighted);
                 }
             }
         }
     }
 
-    private void drawRoundSlot(Canvas canvas, float cx, float cy, float radius, boolean isFilled) {
+    private void drawRoundSlot(Canvas canvas, float cx, float cy, float radius, boolean isFilled, boolean isHighlighted) {
         float rimRadius = radius * 1.25f;
 
         if ("amber_round_yellow".equals(blisterType)) {
@@ -336,6 +348,19 @@ public class BlisterCanvasView extends View {
                 ));
             }
 
+            // If highlighted as today's dose: thin contrasting border (borde finito de otro color)
+            if (isHighlighted) {
+                Paint targetBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                targetBorderPaint.setStyle(Paint.Style.STROKE);
+                targetBorderPaint.setStrokeWidth(dpToPx(1.6f));
+                if (isFolcresStaggered()) {
+                    targetBorderPaint.setColor(Color.rgb(245, 158, 11)); // Golden amber for blue pill
+                } else {
+                    targetBorderPaint.setColor(Color.rgb(14, 165, 233)); // Sky cyan for yellow pill
+                }
+                canvas.drawCircle(cx, cy, radius + dpToPx(1.8f), targetBorderPaint);
+            }
+
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(80, 0, 0, 0));
             canvas.drawCircle(cx + dpToPx(1.2f), cy + dpToPx(1.5f), radius, shadowPaint);
@@ -348,7 +373,7 @@ public class BlisterCanvasView extends View {
         }
     }
 
-    private void drawCapsuleSlot(Canvas canvas, float cx, float cy, float capW, float capH, boolean isFilled) {
+    private void drawCapsuleSlot(Canvas canvas, float cx, float cy, float capW, float capH, boolean isFilled, boolean isHighlighted) {
         float r = capW / 2f;
         tempRect.set(cx - r, cy - capH / 2f, cx + r, cy + capH / 2f);
 
@@ -372,6 +397,17 @@ public class BlisterCanvasView extends View {
             highlightPaint.setColor(Color.argb(160, 255, 255, 255));
             canvas.drawLine(tempRect.left + dpToPx(2f), tempRect.top + dpToPx(3f), tempRect.left + dpToPx(2f), tempRect.bottom - dpToPx(4f), highlightPaint);
         } else {
+            // If highlighted as today's dose: thin contrasting border (borde finito de otro color)
+            if (isHighlighted) {
+                Paint targetBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                targetBorderPaint.setStyle(Paint.Style.STROKE);
+                targetBorderPaint.setStrokeWidth(dpToPx(1.6f));
+                targetBorderPaint.setColor(Color.rgb(14, 165, 233)); // Sky cyan
+                RectF haloRect = new RectF(tempRect);
+                haloRect.inset(-dpToPx(2.2f), -dpToPx(2.2f));
+                canvas.drawRoundRect(haloRect, r + dpToPx(2.2f), r + dpToPx(2.2f), targetBorderPaint);
+            }
+
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(90, 0, 0, 0));
             RectF shadowR = new RectF(tempRect);

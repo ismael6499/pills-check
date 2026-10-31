@@ -31,6 +31,7 @@ import com.agustin.pillscheck.util.AlarmScheduler;
 import com.agustin.pillscheck.util.LocaleHelper;
 import com.agustin.pillscheck.util.PreferenceHelper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
     private TextView tvTodayTakenTime;
     private MaterialButton btnMainAction;
     private MaterialButton btnUndoIntake;
+    private ExtendedFloatingActionButton fabTakeAll;
     private LinearLayout layoutPharmacyAlert;
     private TextView tvPharmacyDesc;
     private RecyclerView rvMedications;
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         tvTodayTakenTime = findViewById(R.id.tv_today_taken_time);
         btnMainAction = findViewById(R.id.btn_main_action);
         btnUndoIntake = findViewById(R.id.btn_undo_intake);
+        fabTakeAll = findViewById(R.id.fab_take_all);
         layoutPharmacyAlert = findViewById(R.id.layout_pharmacy_alert);
         tvPharmacyDesc = findViewById(R.id.tv_pharmacy_desc);
         rvMedications = findViewById(R.id.rv_medications);
@@ -125,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         btnSettings.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SettingsActivity.class)));
 
         btnMainAction.setOnClickListener(v -> handleMainActionClick());
+        fabTakeAll.setOnClickListener(v -> handleMainActionClick());
         btnUndoIntake.setOnClickListener(v -> handleUndoIntakeClick());
     }
 
@@ -138,6 +142,29 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         Executors.newSingleThreadExecutor().execute(() -> {
             db.medicationDao().removeDuplicateKeys();
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
+
+            // Auto-detect if all 3 pills were manually popped:
+            String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            boolean allTakenManually = true;
+            for (MedicationEntity med : meds) {
+                if (med.getActivePillsCount() >= med.getYesterdayCount()) {
+                    allTakenManually = false;
+                    break;
+                }
+            }
+
+            if (allTakenManually && !meds.isEmpty() && !prefs.isTakenForDate(todayStr)) {
+                String timeStr = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
+                prefs.setLastIntakeDate(todayStr);
+                prefs.setLastIntakeTime(timeStr);
+                AlarmScheduler.scheduleNextReminder(MainActivity.this);
+            } else if (!allTakenManually && prefs.isTakenForDate(todayStr)) {
+                // If user put a pill back manually, revert status to pending
+                prefs.setLastIntakeDate("");
+                prefs.setLastIntakeTime("");
+                AlarmScheduler.scheduleNextReminder(MainActivity.this);
+            }
+
             runOnUiThread(() -> {
                 adapter.setItems(meds);
                 updateIntakeStatusUI();
@@ -161,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             btnMainAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.bg_card_secondary));
 
             btnUndoIntake.setVisibility(View.VISIBLE);
+            if (fabTakeAll != null) fabTakeAll.setVisibility(View.GONE);
         } else {
             tvTodayStatusBadge.setText(R.string.status_pending);
             tvTodayStatusBadge.setTextColor(ContextCompat.getColor(this, R.color.accent_amber));
@@ -171,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             btnMainAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.primary));
 
             btnUndoIntake.setVisibility(View.GONE);
+            if (fabTakeAll != null) fabTakeAll.setVisibility(View.VISIBLE);
         }
     }
 
