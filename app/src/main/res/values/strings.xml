@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PillsCheck</string>
+    <string name="dashboard_subtitle">Daily Blister &amp; Stock Tracker</string>
+    
+    <!-- Status & Main actions -->
+    <string name="status_pending">Pending intake today</string>
+    <string name="status_taken_all">All pills taken today!</string>
+    <string name="status_taken_at">Taken today at %s</string>
+    <string name="btn_take_all">Take Today\'s Pills (3)</string>
+    <string name="btn_undo_today">Undo Today\'s Intake</string>
+    <string name="btn_history">History</string>
+    <string name="btn_settings">Settings</string>
+
+    <!-- Blister card strings -->
+    <string name="label_active_blister">Active Blister: %1$d / %2$d</string>
+    <string name="label_yesterday_post">Yesterday ended with: %d pills (Post-intake)</string>
+    <string name="label_yesterday_none">Yesterday: No recorded baseline</string>
+    <string name="label_reserve_stock">Reserve: %1$d blisters (%2$d pills)</string>
+    <string name="label_total_supply">Total Supply: %1$d days (%2$d pills)</string>
+    <string name="btn_open_blister">Open Reserve Blister</string>
+    <string name="btn_add_box">+1 Box / Restock</string>
+    <string name="blister_tap_hint">Tap individual pockets to adjust</string>
+    
+    <!-- Pharmacy Alert -->
+    <string name="pharmacy_alert_title">Pharmacy Restock Alert</string>
+    <string name="pharmacy_alert_desc">Low stock detected! %1$s has only %2$d days of supply left.</string>
+    <string name="pharmacy_ok">Stock Healthy: All supplies exceed %d days</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_blister_title">Open Reserve Blister?</string>
+    <string name="dialog_open_blister_msg">This will deduct 1 full blister (%1$d pills) from reserve stock and reload your active blister for %2$s.</string>
+    <string name="dialog_add_stock_title">Restock %s</string>
+    <string name="dialog_add_stock_msg">Choose stock replenishment method:</string>
+    <string name="dialog_add_one_box">Add 1 Standard Box (%d pills)</string>
+    <string name="dialog_add_custom">Add Custom Amount</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_custom_pills_hint">Number of pills or capsules</string>
+    <string name="dialog_undo_title">Undo today\'s intake?</string>
+    <string name="dialog_undo_msg">This will restore the 3 pills to today\'s blisters and clear today\'s taken mark.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Pill Intake Reminders</string>
+    <string name="notification_channel_desc">Daily alerts and follow-ups to ensure you take your scheduled medications</string>
+    <string name="notification_title">Pills Reminder</string>
+    <string name="notification_body">It\'s time to take your 3 daily pills (Folcres, Minoxidil, Vitamin D).</string>
+    <string name="notif_action_take">Take Now</string>
+    <string name="notif_action_snooze">Snooze 1h</string>
+    <string name="notif_action_silence">Silence Today</string>
+    <string name="notif_taken_toast">Pills marked as taken!</string>
+    <string name="notif_snoozed_toast">Reminder snoozed for 1 hour.</string>
+    <string name="notif_silenced_toast">Reminders silenced for the rest of today.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_reminders_header">Reminder Schedule</string>
+    <string name="settings_first_reminder">First Daily Reminder</string>
+    <string name="settings_repeat_interval">Repeat Interval (if untaken)</string>
+    <string name="settings_cutoff_time">Evening Cutoff / Silence Time</string>
+    <string name="settings_silence_today">Silence Reminders for Today</string>
+    <string name="settings_stock_header">Stock &amp; Pharmacy</string>
+    <string name="settings_low_stock_days">Pharmacy Alert Days Margin</string>
+    <string name="settings_language_header">Language / Idioma</string>
+    <string name="settings_language_select">Application Language</string>
+    <string name="lang_english">English (Default)</string>
+    <string name="lang_spanish">Español</string>
+    <string name="settings_saved">Settings saved successfully</string>
+    <string name="btn_save">Save Settings</string>
+
+    <!-- History -->
+    <string name="history_title">Intake &amp; Stock History</string>
+    <string name="history_empty">No intake records logged yet.</string>
+    <string name="history_taken_format">Taken on %1$s at %2$s</string>
+    <string name="history_pill_detail">%1$s: %2$d pills left in blister</string>
+
+    <!-- Medication Default Titles & Subtitles -->
+    <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
+    <string name="med_folcres_sub">Silver Blister • 30 Tablets (3x10) • Blue</string>
+    
+    <string name="med_minoxidil_title">Minoxidil 2.5mg</string>
+    <string name="med_minoxidil_sub">Amber Blister • 10 Tablets (2x5) • Yellow</string>
+    
+    <string name="med_vitamind_title">Vitamin D</string>
+    <string name="med_vitamind_sub">Silver Blister • 10 Capsules (2x5) • Yellow</string>
+</resources>

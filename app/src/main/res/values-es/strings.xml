@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PillsCheck</string>
+    <string name="dashboard_subtitle">Control Diario de Blísteres y Reservas</string>
+    
+    <!-- Status & Main actions -->
+    <string name="status_pending">Tomas de hoy pendientes</string>
+    <string name="status_taken_all">¡Todas las pastillas tomadas hoy!</string>
+    <string name="status_taken_at">Tomadas hoy a las %s</string>
+    <string name="btn_take_all">Tomar Pastillas de Hoy (3)</string>
+    <string name="btn_undo_today">Deshacer Toma de Hoy</string>
+    <string name="btn_history">Historial</string>
+    <string name="btn_settings">Ajustes</string>
+
+    <!-- Blister card strings -->
+    <string name="label_active_blister">Blíster Activo: %1$d / %2$d</string>
+    <string name="label_yesterday_post">Ayer cerró con: %d pastillas (Post-toma)</string>
+    <string name="label_yesterday_none">Ayer: Sin registro previo</string>
+    <string name="label_reserve_stock">Reserva: %1$d blísteres (%2$d pastillas)</string>
+    <string name="label_total_supply">Tratamiento Total: %1$d días (%2$d pastillas)</string>
+    <string name="btn_open_blister">Abrir Blíster de Reserva</string>
+    <string name="btn_add_box">+1 Caja / Reponer</string>
+    <string name="blister_tap_hint">Tocá cavidades individuales para ajustar</string>
+    
+    <!-- Pharmacy Alert -->
+    <string name="pharmacy_alert_title">Aviso de Farmacia</string>
+    <string name="pharmacy_alert_desc">¡Stock bajo! A %1$s le quedan solo %2$d días de tratamiento.</string>
+    <string name="pharmacy_ok">Stock Saludable: Más de %d días de cobertura en todos</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_open_blister_title">¿Abrir Blíster de Reserva?</string>
+    <string name="dialog_open_blister_msg">Esto descontará 1 blíster completo (%1$d pastillas) de tu stock de reserva y recargará el blíster activo de %2$s.</string>
+    <string name="dialog_add_stock_title">Reponer %s</string>
+    <string name="dialog_add_stock_msg">Elegí cómo ingresar la reposición de stock:</string>
+    <string name="dialog_add_one_box">Sumar 1 Caja Estándar (%d pastillas)</string>
+    <string name="dialog_add_custom">Sumar Cantidad Personalizada</string>
+    <string name="dialog_confirm">Confirmar</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_custom_pills_hint">Cantidad de pastillas o cápsulas</string>
+    <string name="dialog_undo_title">¿Deshacer la toma de hoy?</string>
+    <string name="dialog_undo_msg">Esto restaurará las 3 pastillas en los blísteres de hoy y quitará la marca de toma realizada.</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_name">Recordatorios de Tomas</string>
+    <string name="notification_channel_desc">Alertas diarias y repeticiones para asegurar la toma de tus medicamentos</string>
+    <string name="notification_title">Recordatorio de Pastillas</string>
+    <string name="notification_body">Es hora de tomar tus 3 pastillas de hoy (Folcres, Minoxidil, Vitamina D).</string>
+    <string name="notif_action_take">Tomar Ahora</string>
+    <string name="notif_action_snooze">Posponer 1h</string>
+    <string name="notif_action_silence">Silenciar Hoy</string>
+    <string name="notif_taken_toast">¡Pastillas marcadas como tomadas!</string>
+    <string name="notif_snoozed_toast">Recordatorio pospuesto por 1 hora.</string>
+    <string name="notif_silenced_toast">Recordatorios silenciados por el resto del día.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_reminders_header">Horarios de Recordatorio</string>
+    <string name="settings_first_reminder">Primer Recordatorio del Día</string>
+    <string name="settings_repeat_interval">Frecuencia de Repetición (si no se tomó)</string>
+    <string name="settings_cutoff_time">Hora Límite de Corte / Silencio Nocturno</string>
+    <string name="settings_silence_today">Silenciar Recordatorios por Hoy</string>
+    <string name="settings_stock_header">Stock y Farmacia</string>
+    <string name="settings_low_stock_days">Margen de Días para Alerta de Farmacia</string>
+    <string name="settings_language_header">Idioma / Language</string>
+    <string name="settings_language_select">Idioma de la Aplicación</string>
+    <string name="lang_english">English (Default)</string>
+    <string name="lang_spanish">Español</string>
+    <string name="settings_saved">Ajustes guardados correctamente</string>
+    <string name="btn_save">Guardar Ajustes</string>
+
+    <!-- History -->
+    <string name="history_title">Historial de Tomas y Stock</string>
+    <string name="history_empty">Aún no hay tomas registradas en el historial.</string>
+    <string name="history_taken_format">Tomadas el %1$s a las %2$s</string>
+    <string name="history_pill_detail">%1$s: %2$d pastillas restantes en el blíster</string>
+
+    <!-- Medication Default Titles & Subtitles -->
+    <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
+    <string name="med_folcres_sub">Blíster Plateado • 30 Comprimidos (3x10) • Azul</string>
+    
+    <string name="med_minoxidil_title">Minoxidil 2.5mg</string>
+    <string name="med_minoxidil_sub">Blíster Ámbar • 10 Comprimidos (2x5) • Amarillo</string>
+    
+    <string name="med_vitamind_title">Vitamina D</string>
+    <string name="med_vitamind_sub">Blíster Plateado • 10 Cápsulas (2x5) • Amarillo</string>
+</resources>
