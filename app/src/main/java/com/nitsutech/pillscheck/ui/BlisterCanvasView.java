@@ -39,6 +39,13 @@ public class BlisterCanvasView extends View {
 
     private final RectF blisterRect = new RectF();
     private final RectF tempRect = new RectF();
+    // Drag & Drop Pill Repositioning
+    private int draggedSlotIndex = -1;
+    private boolean isDragging = false;
+    private float dragStartX, dragStartY;
+    private float dragCurrentX, dragCurrentY;
+    private int hoverTargetIndex = -1;
+
 
     // Cache slot center coordinates for fast accurate touch detection & drawing
     private float[] slotX = new float[30];
@@ -162,6 +169,10 @@ public class BlisterCanvasView extends View {
         } else {
             drawRegularGridCavities(canvas, blisterRect);
         }
+
+        if (isDragging && draggedSlotIndex >= 0) {
+            drawDraggedFloatingPill(canvas);
+        }
     }
 
     private void drawBlisterBackground(Canvas canvas, RectF rect, float cornerRadius) {
@@ -255,8 +266,10 @@ public class BlisterCanvasView extends View {
                 slotY[slotIndex] = y;
                 slotRadius[slotIndex] = radius;
 
-                boolean isFilled = slotStates[slotIndex];
-                boolean isHighlighted = (slotIndex == highlightedSlotIndex);
+                boolean isBeingDragged = (isDragging && slotIndex == draggedSlotIndex);
+                boolean isFilled = isBeingDragged ? false : slotStates[slotIndex];
+                boolean isHoverTarget = (isDragging && slotIndex == hoverTargetIndex && slotIndex != draggedSlotIndex);
+                boolean isHighlighted = (slotIndex == highlightedSlotIndex) || isHoverTarget;
                 drawRoundSlot(canvas, x, y, radius, isFilled, isHighlighted);
                 slotIndex++;
             }
@@ -286,8 +299,10 @@ public class BlisterCanvasView extends View {
                 slotX[index] = cx;
                 slotY[index] = cy;
 
-                boolean isFilled = slotStates[index];
-                boolean isHighlighted = (index == highlightedSlotIndex);
+                boolean isBeingDragged = (isDragging && index == draggedSlotIndex);
+                boolean isFilled = isBeingDragged ? false : slotStates[index];
+                boolean isHoverTarget = (isDragging && index == hoverTargetIndex && index != draggedSlotIndex);
+                boolean isHighlighted = (index == highlightedSlotIndex) || isHoverTarget;
 
                 if ("silver_capsule_yellow".equals(blisterType)) {
                     // Vertical elongated capsule (standing upright: height > width)
@@ -435,24 +450,119 @@ public class BlisterCanvasView extends View {
         }
     }
 
+    private void drawDraggedFloatingPill(Canvas canvas) {
+        float r = (draggedSlotIndex >= 0 && draggedSlotIndex < slotRadius.length && slotRadius[draggedSlotIndex] > 0)
+                ? slotRadius[draggedSlotIndex] : dpToPx(14);
+
+        if ("silver_capsule_yellow".equals(blisterType)) {
+            float capW = dpToPx(16) * 1.15f;
+            float capH = dpToPx(32) * 1.15f;
+            Paint floatShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+            floatShadow.setStyle(Paint.Style.FILL);
+            floatShadow.setColor(Color.argb(120, 0, 0, 0));
+            RectF sRect = new RectF(dragCurrentX - capW / 2f + dpToPx(3), dragCurrentY - capH / 2f + dpToPx(5),
+                    dragCurrentX + capW / 2f + dpToPx(3), dragCurrentY + capH / 2f + dpToPx(5));
+            canvas.drawRoundRect(sRect, capW / 2f, capW / 2f, floatShadow);
+            drawCapsuleSlot(canvas, dragCurrentX, dragCurrentY, capW, capH, true, false);
+        } else {
+            float floatRadius = r * 1.15f;
+            Paint floatShadow = new Paint(Paint.ANTI_ALIAS_FLAG);
+            floatShadow.setStyle(Paint.Style.FILL);
+            floatShadow.setColor(Color.argb(120, 0, 0, 0));
+            canvas.drawCircle(dragCurrentX + dpToPx(3), dragCurrentY + dpToPx(5), floatRadius, floatShadow);
+            drawRoundSlot(canvas, dragCurrentX, dragCurrentY, floatRadius, true, false);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            float x = event.getX();
-            float y = event.getY();
+        int action = event.getActionMasked();
+        float x = event.getX();
+        float y = event.getY();
 
-            int touchedIndex = getTouchedSlotIndex(x, y);
-            if (touchedIndex >= 0 && touchedIndex < slotStates.length) {
-                slotStates[touchedIndex] = !slotStates[touchedIndex];
-                performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                invalidate();
-                if (listener != null) {
-                    listener.onSlotToggled(touchedIndex, slotStates[touchedIndex], getRemainingCount());
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                dragStartX = x;
+                dragStartY = y;
+                dragCurrentX = x;
+                dragCurrentY = y;
+                isDragging = false;
+                hoverTargetIndex = -1;
+                draggedSlotIndex = getTouchedSlotIndex(x, y);
+                if (draggedSlotIndex >= 0 && slotStates[draggedSlotIndex]) {
+                    if (getParent() != null) {
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                    }
                 }
                 return true;
-            }
+
+            case MotionEvent.ACTION_MOVE:
+                if (draggedSlotIndex >= 0 && slotStates[draggedSlotIndex]) {
+                    float dist = (float) Math.hypot(x - dragStartX, y - dragStartY);
+                    if (dist > dpToPx(7)) {
+                        if (!isDragging) {
+                            isDragging = true;
+                            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                        }
+                        dragCurrentX = x;
+                        dragCurrentY = y;
+                        hoverTargetIndex = getTouchedSlotIndex(x, y);
+                        invalidate();
+                    }
+                }
+                return true;
+
+            case MotionEvent.ACTION_UP:
+                if (isDragging && draggedSlotIndex >= 0) {
+                    int targetIndex = getTouchedSlotIndex(x, y);
+                    if (targetIndex >= 0 && targetIndex != draggedSlotIndex && targetIndex < slotStates.length) {
+                        boolean targetOccupied = slotStates[targetIndex];
+                        slotStates[draggedSlotIndex] = targetOccupied;
+                        slotStates[targetIndex] = true;
+                        performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        if (listener != null) {
+                            listener.onSlotToggled(targetIndex, true, getRemainingCount());
+                        }
+                    }
+                    isDragging = false;
+                    draggedSlotIndex = -1;
+                    hoverTargetIndex = -1;
+                    if (getParent() != null) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+                    invalidate();
+                    return true;
+                } else {
+                    int touchedIndex = getTouchedSlotIndex(x, y);
+                    if (touchedIndex >= 0 && touchedIndex < slotStates.length) {
+                        slotStates[touchedIndex] = !slotStates[touchedIndex];
+                        performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                        invalidate();
+                        if (listener != null) {
+                            listener.onSlotToggled(touchedIndex, slotStates[touchedIndex], getRemainingCount());
+                        }
+                    }
+                    isDragging = false;
+                    draggedSlotIndex = -1;
+                    hoverTargetIndex = -1;
+                    if (getParent() != null) {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                    }
+                    invalidate();
+                    return true;
+                }
+
+            case MotionEvent.ACTION_CANCEL:
+                isDragging = false;
+                draggedSlotIndex = -1;
+                hoverTargetIndex = -1;
+                if (getParent() != null) {
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                }
+                invalidate();
+                return true;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
     private int getTouchedSlotIndex(float touchX, float touchY) {
