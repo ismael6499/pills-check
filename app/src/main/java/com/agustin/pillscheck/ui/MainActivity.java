@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
 
     private void loadDashboardData() {
         Executors.newSingleThreadExecutor().execute(() -> {
+            db.medicationDao().removeDuplicateKeys();
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
             runOnUiThread(() -> {
                 adapter.setItems(meds);
@@ -185,7 +186,8 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
 
             for (MedicationEntity med : meds) {
                 boolean[] slots = med.getSlotsArray();
-                for (int i = 0; i < slots.length; i++) {
+                // Consume rightmost filled pill
+                for (int i = slots.length - 1; i >= 0; i--) {
                     if (slots[i]) {
                         slots[i] = false;
                         break;
@@ -239,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                         for (MedicationEntity med : meds) {
                             boolean[] slots = med.getSlotsArray();
                             // Restore first empty slot
-                            for (int i = slots.length - 1; i >= 0; i--) {
+                            for (int i = 0; i < slots.length; i++) {
                                 if (!slots[i]) {
                                     slots[i] = true;
                                     break;

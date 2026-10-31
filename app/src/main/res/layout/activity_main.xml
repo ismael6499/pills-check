@@ -1,37 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_screen">
+    android:background="@color/bg_screen"
+    android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:clipToPadding="false"
-        android:paddingBottom="32dp">
+        android:paddingBottom="12dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="24dp">
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp">
 
-            <!-- Top App Bar -->
+            <!-- Compact Top App Bar -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="8dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@id/top_actions"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/tv_app_title"
@@ -39,17 +41,24 @@
                         android:layout_height="wrap_content"
                         android:text="@string/app_name"
                         android:textColor="@color/text_primary"
-                        android:textSize="26sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="6dp"
+                        android:text="•"
+                        android:textColor="@color/text_muted"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tv_dashboard_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Saturday, Oct 31"
+                        android:text="Sat, Oct 31"
                         android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -62,8 +71,8 @@
 
                     <ImageButton
                         android:id="@+id/btn_open_history"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/btn_history"
                         android:src="@drawable/ic_history"
@@ -71,9 +80,8 @@
 
                     <ImageButton
                         android:id="@+id/btn_open_settings"
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
-                        android:layout_marginStart="4dp"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@string/btn_settings"
                         android:src="@drawable/ic_settings"
@@ -81,123 +89,105 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <!-- Pharmacy Alert Banner (visible when supply < threshold) -->
+            <!-- Pharmacy Alert Banner (compact) -->
             <LinearLayout
                 android:id="@+id/layout_pharmacy_alert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="6dp"
                 android:background="@drawable/bg_alert_banner"
                 android:orientation="horizontal"
-                android:padding="14dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
                 android:gravity="center_vertical"
                 android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/ic_warning"
                     app:tint="@color/accent_red"
                     android:contentDescription="@string/pharmacy_alert_title" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_pharmacy_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_pharmacy_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pharmacy_alert_title"
-                        android:textColor="#FCA5A5"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tv_pharmacy_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Stock low! Minoxidil has only 3 days left."
-                        android:textColor="#FECACA"
-                        android:textSize="12sp" />
-                </LinearLayout>
+                    android:layout_marginStart="8dp"
+                    android:text="Stock low! Minoxidil has only 3 days left."
+                    android:textColor="#FECACA"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Today's Intake Status Card -->
+            <!-- Compact Today's Intake Status Bar -->
             <LinearLayout
                 android:id="@+id/card_today_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="8dp"
                 android:background="@drawable/bg_card_rounded"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_today_status_badge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
                         android:text="@string/status_pending"
                         android:textColor="@color/accent_amber"
-                        android:textSize="14sp"
+                        android:textSize="13sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_today_taken_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="1dp"
                         android:text=""
                         android:textColor="@color/accent_green"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         android:visibility="gone" />
-                </RelativeLayout>
+                </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_main_action"
-                    android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
                     android:backgroundTint="@color/primary"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="14dp"
                     android:text="@string/btn_take_all"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    app:cornerRadius="12dp" />
+                    app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_undo_intake"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="4dp"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="8dp"
                     android:text="@string/btn_undo_today"
                     android:textAllCaps="false"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp"
+                    android:textSize="12sp"
                     android:visibility="gone" />
             </LinearLayout>
 
-            <!-- Blister Section Header -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="@string/dashboard_subtitle"
-                android:textColor="@color/text_secondary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- RecyclerView of Medication Blister Cards -->
+            <!-- RecyclerView of Medication Blister Cards (All 3 fit cleanly) -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_medications"
                 android:layout_width="match_parent"
@@ -207,4 +197,4 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

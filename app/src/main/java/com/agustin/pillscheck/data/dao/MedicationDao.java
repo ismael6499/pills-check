@@ -30,4 +30,7 @@ public interface MedicationDao {
 
     @Update
     void update(MedicationEntity med);
+
+    @Query("DELETE FROM medications WHERE id NOT IN (SELECT MIN(id) FROM medications GROUP BY `key`)")
+    void removeDuplicateKeys();
 }

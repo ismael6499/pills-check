@@ -13,14 +13,14 @@
     <string name="btn_settings">Settings</string>
 
     <!-- Blister card strings -->
-    <string name="label_active_blister">Active Blister: %1$d / %2$d</string>
-    <string name="label_yesterday_post">Yesterday ended with: %d pills (Post-intake)</string>
-    <string name="label_yesterday_none">Yesterday: No recorded baseline</string>
-    <string name="label_reserve_stock">Reserve: %1$d blisters (%2$d pills)</string>
-    <string name="label_total_supply">Total Supply: %1$d days (%2$d pills)</string>
-    <string name="btn_open_blister">Open Reserve Blister</string>
-    <string name="btn_add_box">+1 Box / Restock</string>
-    <string name="blister_tap_hint">Tap individual pockets to adjust</string>
+    <string name="label_active_blister">%1$d/%2$d</string>
+    <string name="label_yesterday_post">Yesterday: %d</string>
+    <string name="label_yesterday_none">Yesterday: -</string>
+    <string name="label_reserve_stock">Res: %1$d bl. (%2$d)</string>
+    <string name="label_total_supply">%1$d days</string>
+    <string name="btn_open_blister">+ Blister</string>
+    <string name="btn_add_box">+ Box</string>
+    <string name="blister_tap_hint">Tap pockets to adjust</string>
     
     <!-- Pharmacy Alert -->
     <string name="pharmacy_alert_title">Pharmacy Restock Alert</string>

@@ -13,14 +13,14 @@
     <string name="btn_settings">Ajustes</string>
 
     <!-- Blister card strings -->
-    <string name="label_active_blister">Blíster Activo: %1$d / %2$d</string>
-    <string name="label_yesterday_post">Ayer cerró con: %d pastillas (Post-toma)</string>
-    <string name="label_yesterday_none">Ayer: Sin registro previo</string>
-    <string name="label_reserve_stock">Reserva: %1$d blísteres (%2$d pastillas)</string>
-    <string name="label_total_supply">Tratamiento Total: %1$d días (%2$d pastillas)</string>
-    <string name="btn_open_blister">Abrir Blíster de Reserva</string>
-    <string name="btn_add_box">+1 Caja / Reponer</string>
-    <string name="blister_tap_hint">Tocá cavidades individuales para ajustar</string>
+    <string name="label_active_blister">%1$d/%2$d</string>
+    <string name="label_yesterday_post">Ayer: %d</string>
+    <string name="label_yesterday_none">Ayer: -</string>
+    <string name="label_reserve_stock">Res: %1$d bl. (%2$d)</string>
+    <string name="label_total_supply">%1$d días</string>
+    <string name="btn_open_blister">+ Blíster</string>
+    <string name="btn_add_box">+ Caja</string>
+    <string name="blister_tap_hint">Tocá cavidades para ajustar</string>
     
     <!-- Pharmacy Alert -->
     <string name="pharmacy_alert_title">Aviso de Farmacia</string>

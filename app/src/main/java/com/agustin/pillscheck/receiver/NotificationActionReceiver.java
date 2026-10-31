@@ -69,8 +69,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
             for (MedicationEntity med : meds) {
                 boolean[] slots = med.getSlotsArray();
-                // Find first filled slot and consume it
-                for (int i = 0; i < slots.length; i++) {
+                // Consume the rightmost filled slot (matching physical taking order)
+                for (int i = slots.length - 1; i >= 0; i--) {
                     if (slots[i]) {
                         slots[i] = false;
                         break;

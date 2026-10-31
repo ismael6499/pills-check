@@ -3,11 +3,9 @@ package com.agustin.pillscheck.data;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.agustin.pillscheck.data.dao.IntakeRecordDao;
 import com.agustin.pillscheck.data.dao.MedicationDao;
@@ -20,7 +18,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 @Database(entities = {MedicationEntity.class, IntakeRecordEntity.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
@@ -40,15 +37,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             AppDatabase.class,
                             "pills_check.db"
                     )
-                    .addCallback(new Callback() {
-                        @Override
-                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                            super.onCreate(db);
-                            Executors.newSingleThreadExecutor().execute(() -> {
-                                seedFromAssets(context.getApplicationContext(), getInstance(context).medicationDao());
-                            });
-                        }
-                    })
+                    .fallbackToDestructiveMigration()
                     .build();
                 }
             }
@@ -56,8 +45,10 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    public static void seedFromAssets(Context context, MedicationDao dao) {
+    public static synchronized void seedFromAssets(Context context, MedicationDao dao) {
         try {
+            dao.removeDuplicateKeys();
+
             InputStream is = null;
             try {
                 // First attempt: local_seed.json (local personal seed)
@@ -74,10 +65,17 @@ public abstract class AppDatabase extends RoomDatabase {
                 Type listType = new TypeToken<List<MedicationEntity>>() {}.getType();
                 List<MedicationEntity> list = gson.fromJson(new InputStreamReader(is), listType);
                 if (list != null && !list.isEmpty()) {
-                    dao.insertAll(list);
+                    for (MedicationEntity med : list) {
+                        MedicationEntity existing = dao.getMedicationByKey(med.getKey());
+                        if (existing == null) {
+                            dao.insert(med);
+                        }
+                    }
                 }
                 is.close();
             }
+
+            dao.removeDuplicateKeys();
         } catch (Exception e) {
             Log.e(TAG, "Error seeding medications from assets", e);
         }

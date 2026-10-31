@@ -27,7 +27,6 @@ public class BlisterCanvasView extends View {
     private String blisterType = "silver_round_blue";
     private OnSlotClickListener listener;
 
-    // Paints
     private final Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint cavityEmptyPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -39,6 +38,11 @@ public class BlisterCanvasView extends View {
 
     private final RectF blisterRect = new RectF();
     private final RectF tempRect = new RectF();
+
+    // Cache slot center coordinates for fast accurate touch detection & drawing
+    private float[] slotX = new float[30];
+    private float[] slotY = new float[30];
+    private float[] slotRadius = new float[30];
 
     public BlisterCanvasView(Context context) {
         super(context);
@@ -56,13 +60,12 @@ public class BlisterCanvasView extends View {
     }
 
     private void init() {
-        textPaint.setColor(Color.argb(90, 255, 255, 255));
-        textPaint.setTextSize(spToPx(10));
-        textPaint.setLetterSpacing(0.1f);
+        textPaint.setTextSize(spToPx(9));
+        textPaint.setLetterSpacing(0.08f);
         textPaint.setFakeBoldText(true);
 
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(dpToPx(1.5f));
+        borderPaint.setStrokeWidth(dpToPx(1.2f));
     }
 
     public void configure(int rows, int cols, String blisterType, boolean[] slots) {
@@ -70,15 +73,24 @@ public class BlisterCanvasView extends View {
         this.cols = Math.max(1, cols);
         this.blisterType = blisterType != null ? blisterType : "silver_round_blue";
 
-        int total = this.rows * this.cols;
+        int total = isFolcresStaggered() ? 30 : (this.rows * this.cols);
         this.slotStates = new boolean[total];
         if (slots != null) {
             for (int i = 0; i < Math.min(slots.length, total); i++) {
                 this.slotStates[i] = slots[i];
             }
         }
+        if (slotX.length < total) {
+            slotX = new float[total];
+            slotY = new float[total];
+            slotRadius = new float[total];
+        }
         requestLayout();
         invalidate();
+    }
+
+    public boolean isFolcresStaggered() {
+        return "silver_round_blue".equals(blisterType) || rows == 4;
     }
 
     public void setOnSlotClickListener(OnSlotClickListener listener) {
@@ -104,16 +116,17 @@ public class BlisterCanvasView extends View {
 
         int targetWidth = widthMode == MeasureSpec.EXACTLY ? widthSize : dpToPx(340);
 
-        // Aspect ratio calculation
-        float cellAspect = blisterType.contains("capsule") ? 1.35f : 1.0f;
-        float headerPadding = dpToPx(24);
-        float sideMargin = dpToPx(16);
-        float availableWidth = targetWidth - (sideMargin * 2);
-        float cellWidth = availableWidth / (float) cols;
-        float cellHeight = cellWidth * cellAspect;
-        float targetHeight = (cellHeight * rows) + headerPadding + dpToPx(16);
+        // Compact target heights so all 3 blisters fit comfortably on screen
+        int targetHeight;
+        if (isFolcresStaggered()) {
+            targetHeight = dpToPx(88); // 4 rows
+        } else if ("silver_capsule_yellow".equals(blisterType)) {
+            targetHeight = dpToPx(64); // 2 rows capsules
+        } else {
+            targetHeight = dpToPx(58); // 2 rows round
+        }
 
-        setMeasuredDimension(targetWidth, (int) targetHeight);
+        setMeasuredDimension(targetWidth, targetHeight);
     }
 
     @Override
@@ -124,8 +137,8 @@ public class BlisterCanvasView extends View {
         int h = getHeight();
         if (w <= 0 || h <= 0) return;
 
-        float cornerRadius = dpToPx(14);
-        blisterRect.set(dpToPx(8), dpToPx(8), w - dpToPx(8), h - dpToPx(8));
+        float cornerRadius = dpToPx(10);
+        blisterRect.set(dpToPx(4), dpToPx(3), w - dpToPx(4), h - dpToPx(3));
 
         // 1. Draw blister foil background
         drawBlisterBackground(canvas, blisterRect, cornerRadius);
@@ -133,13 +146,16 @@ public class BlisterCanvasView extends View {
         // 2. Draw embossed text & details
         drawEmbossedDetails(canvas, blisterRect);
 
-        // 3. Draw cavities and pills
-        drawCavitiesAndPills(canvas, blisterRect);
+        // 3. Compute and draw cavities and pills
+        if (isFolcresStaggered()) {
+            drawFolcresStaggeredCavities(canvas, blisterRect);
+        } else {
+            drawRegularGridCavities(canvas, blisterRect);
+        }
     }
 
     private void drawBlisterBackground(Canvas canvas, RectF rect, float cornerRadius) {
         if ("amber_round_yellow".equals(blisterType)) {
-            // Amber / Orange translucent blister
             bgPaint.setShader(new LinearGradient(
                     rect.left, rect.top, rect.right, rect.bottom,
                     new int[]{Color.rgb(234, 88, 12), Color.rgb(194, 65, 12), Color.rgb(249, 115, 22)},
@@ -148,10 +164,9 @@ public class BlisterCanvasView extends View {
             ));
             borderPaint.setColor(Color.rgb(154, 52, 18));
         } else {
-            // Metallic Silver aluminum blister
             bgPaint.setShader(new LinearGradient(
                     rect.left, rect.top, rect.right, rect.bottom,
-                    new int[]{Color.rgb(226, 232, 240), Color.rgb(190, 200, 215), Color.rgb(241, 245, 249)},
+                    new int[]{Color.rgb(226, 232, 240), Color.rgb(195, 204, 217), Color.rgb(241, 245, 249)},
                     new float[]{0f, 0.45f, 1f},
                     Shader.TileMode.CLAMP
             ));
@@ -165,42 +180,78 @@ public class BlisterCanvasView extends View {
         if ("amber_round_yellow".equals(blisterType)) {
             float centerY = rect.centerY();
             Paint creasePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            creasePaint.setStrokeWidth(dpToPx(3.5f));
+            creasePaint.setStrokeWidth(dpToPx(2.5f));
             creasePaint.setStyle(Paint.Style.STROKE);
             creasePaint.setColor(Color.argb(120, 124, 45, 18));
-            canvas.drawLine(rect.left + dpToPx(18), centerY, rect.right - dpToPx(18), centerY, creasePaint);
+            canvas.drawLine(rect.left + dpToPx(14), centerY, rect.right - dpToPx(24), centerY, creasePaint);
 
             Paint creaseHighlight = new Paint(Paint.ANTI_ALIAS_FLAG);
-            creaseHighlight.setStrokeWidth(dpToPx(1.5f));
+            creaseHighlight.setStrokeWidth(dpToPx(1f));
             creaseHighlight.setStyle(Paint.Style.STROKE);
             creaseHighlight.setColor(Color.argb(150, 254, 215, 170));
-            canvas.drawLine(rect.left + dpToPx(18), centerY + dpToPx(2.5f), rect.right - dpToPx(18), centerY + dpToPx(2.5f), creaseHighlight);
+            canvas.drawLine(rect.left + dpToPx(14), centerY + dpToPx(2f), rect.right - dpToPx(24), centerY + dpToPx(2f), creaseHighlight);
         }
     }
 
     private void drawEmbossedDetails(Canvas canvas, RectF rect) {
-        if ("silver_round_blue".equals(blisterType)) {
-            // Embossed text on left
+        if (isFolcresStaggered()) {
+            // Embossed text on RIGHT margin (as in physical blister)
             canvas.save();
-            canvas.rotate(-90, rect.left + dpToPx(14), rect.centerY());
+            canvas.rotate(90, rect.right - dpToPx(10), rect.centerY());
             textPaint.setColor(Color.argb(120, 100, 116, 139));
-            canvas.drawText("LB807 V03/28", rect.left + dpToPx(14) - dpToPx(26), rect.centerY() + dpToPx(3), textPaint);
+            canvas.drawText("LB807 V03/28", rect.right - dpToPx(10) - dpToPx(24), rect.centerY() + dpToPx(3), textPaint);
             canvas.restore();
         } else if ("amber_round_yellow".equals(blisterType)) {
-            // Embossed text on right
+            // Embossed text on RIGHT
             canvas.save();
-            canvas.rotate(90, rect.right - dpToPx(14), rect.centerY());
+            canvas.rotate(90, rect.right - dpToPx(10), rect.centerY());
             textPaint.setColor(Color.argb(140, 120, 53, 15));
-            canvas.drawText("10000 V11/27", rect.right - dpToPx(14) - dpToPx(24), rect.centerY() + dpToPx(3), textPaint);
+            canvas.drawText("10000 V11/27", rect.right - dpToPx(10) - dpToPx(22), rect.centerY() + dpToPx(3), textPaint);
             canvas.restore();
         }
     }
 
-    private void drawCavitiesAndPills(Canvas canvas, RectF rect) {
-        float leftPadding = ("silver_round_blue".equals(blisterType)) ? dpToPx(26) : dpToPx(16);
-        float rightPadding = ("amber_round_yellow".equals(blisterType)) ? dpToPx(26) : dpToPx(16);
-        float topPadding = dpToPx(14);
-        float bottomPadding = dpToPx(14);
+    private void drawFolcresStaggeredCavities(Canvas canvas, RectF rect) {
+        float leftMargin = dpToPx(14);
+        float rightMargin = dpToPx(24); // room for embossed text
+        float topMargin = dpToPx(8);
+        float bottomMargin = dpToPx(8);
+
+        float availW = rect.width() - leftMargin - rightMargin;
+        float availH = rect.height() - topMargin - bottomMargin;
+
+        float stepX = availW / 8.0f;
+        float stepY = availH / 4.0f;
+        float radius = Math.min(stepX, stepY) * 0.40f;
+
+        int[] rowCols = new int[]{7, 8, 7, 8};
+        int slotIndex = 0;
+
+        for (int r = 0; r < 4; r++) {
+            int colsInRow = rowCols[r];
+            float y = rect.top + topMargin + (r * stepY) + (stepY / 2.0f);
+            float startX = rect.left + leftMargin + (r % 2 == 0 ? stepX * 0.5f : 0f);
+
+            for (int c = 0; c < colsInRow; c++) {
+                if (slotIndex >= slotStates.length) break;
+
+                float x = startX + (c * stepX) + (stepX / 2.0f);
+                slotX[slotIndex] = x;
+                slotY[slotIndex] = y;
+                slotRadius[slotIndex] = radius;
+
+                boolean isFilled = slotStates[slotIndex];
+                drawRoundSlot(canvas, x, y, radius, isFilled);
+                slotIndex++;
+            }
+        }
+    }
+
+    private void drawRegularGridCavities(Canvas canvas, RectF rect) {
+        float leftPadding = dpToPx(14);
+        float rightPadding = dpToPx(24);
+        float topPadding = dpToPx(6);
+        float bottomPadding = dpToPx(6);
 
         float gridWidth = rect.width() - leftPadding - rightPadding;
         float gridHeight = rect.height() - topPadding - bottomPadding;
@@ -216,12 +267,19 @@ public class BlisterCanvasView extends View {
                 float cx = rect.left + leftPadding + (c * cellW) + (cellW / 2f);
                 float cy = rect.top + topPadding + (r * cellH) + (cellH / 2f);
 
+                slotX[index] = cx;
+                slotY[index] = cy;
+
                 boolean isFilled = slotStates[index];
 
                 if ("silver_capsule_yellow".equals(blisterType)) {
-                    drawCapsuleSlot(canvas, cx, cy, cellW * 0.46f, cellH * 0.76f, isFilled);
+                    float capW = cellW * 0.44f;
+                    float capH = cellH * 0.76f;
+                    slotRadius[index] = Math.max(capW, capH) / 2f;
+                    drawCapsuleSlot(canvas, cx, cy, capW, capH, isFilled);
                 } else {
-                    float radius = Math.min(cellW, cellH) * 0.35f;
+                    float radius = Math.min(cellW, cellH) * 0.38f;
+                    slotRadius[index] = radius;
                     drawRoundSlot(canvas, cx, cy, radius, isFilled);
                 }
             }
@@ -231,17 +289,14 @@ public class BlisterCanvasView extends View {
     private void drawRoundSlot(Canvas canvas, float cx, float cy, float radius, boolean isFilled) {
         float rimRadius = radius * 1.25f;
 
-        // Rim
         if ("amber_round_yellow".equals(blisterType)) {
             cavityRimPaint.setColor(Color.argb(100, 124, 45, 18));
-            canvas.drawCircle(cx, cy, rimRadius, cavityRimPaint);
         } else {
             cavityRimPaint.setColor(Color.argb(70, 100, 116, 139));
-            canvas.drawCircle(cx, cy, rimRadius, cavityRimPaint);
         }
+        canvas.drawCircle(cx, cy, rimRadius, cavityRimPaint);
 
         if (!isFilled) {
-            // Empty cavity (crushed/open blister pocket)
             if ("amber_round_yellow".equals(blisterType)) {
                 cavityEmptyPaint.setColor(Color.rgb(180, 83, 9));
             } else {
@@ -249,21 +304,17 @@ public class BlisterCanvasView extends View {
             }
             canvas.drawCircle(cx, cy, radius, cavityEmptyPaint);
 
-            // Inner dark pocket shadow
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(110, 15, 23, 42));
-            canvas.drawCircle(cx + dpToPx(1f), cy + dpToPx(1f), radius * 0.85f, shadowPaint);
+            canvas.drawCircle(cx + dpToPx(0.8f), cy + dpToPx(0.8f), radius * 0.85f, shadowPaint);
 
-            // Broken foil reflective highlights
             highlightPaint.setStyle(Paint.Style.STROKE);
-            highlightPaint.setStrokeWidth(dpToPx(1.2f));
+            highlightPaint.setStrokeWidth(dpToPx(1f));
             highlightPaint.setColor(Color.argb(160, 255, 255, 255));
             tempRect.set(cx - radius * 0.7f, cy - radius * 0.7f, cx + radius * 0.7f, cy + radius * 0.7f);
             canvas.drawArc(tempRect, 210, 100, false, highlightPaint);
         } else {
-            // Filled pill
-            if ("silver_round_blue".equals(blisterType)) {
-                // Vibrant blue round tablet (Folcres)
+            if (isFolcresStaggered()) {
                 pillPaint.setShader(new RadialGradient(
                         cx - radius * 0.25f, cy - radius * 0.35f, radius * 1.1f,
                         new int[]{Color.rgb(56, 189, 248), Color.rgb(2, 132, 199), Color.rgb(3, 105, 161)},
@@ -271,7 +322,6 @@ public class BlisterCanvasView extends View {
                         Shader.TileMode.CLAMP
                 ));
             } else {
-                // Vibrant yellow round tablet (Minoxidil)
                 pillPaint.setShader(new RadialGradient(
                         cx - radius * 0.25f, cy - radius * 0.35f, radius * 1.1f,
                         new int[]{Color.rgb(254, 240, 138), Color.rgb(234, 179, 8), Color.rgb(202, 138, 4)},
@@ -280,15 +330,12 @@ public class BlisterCanvasView extends View {
                 ));
             }
 
-            // Pill drop shadow
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(80, 0, 0, 0));
-            canvas.drawCircle(cx + dpToPx(1.5f), cy + dpToPx(2f), radius, shadowPaint);
+            canvas.drawCircle(cx + dpToPx(1.2f), cy + dpToPx(1.5f), radius, shadowPaint);
 
-            // Pill body
             canvas.drawCircle(cx, cy, radius, pillPaint);
 
-            // Dome 3D glossy highlight
             highlightPaint.setStyle(Paint.Style.FILL);
             highlightPaint.setColor(Color.argb(170, 255, 255, 255));
             canvas.drawCircle(cx - radius * 0.28f, cy - radius * 0.35f, radius * 0.26f, highlightPaint);
@@ -299,39 +346,32 @@ public class BlisterCanvasView extends View {
         float r = capW / 2f;
         tempRect.set(cx - r, cy - capH / 2f, cx + r, cy + capH / 2f);
 
-        // Cavity rim
         RectF rimRect = new RectF(tempRect);
-        rimRect.inset(-dpToPx(2.5f), -dpToPx(2.5f));
+        rimRect.inset(-dpToPx(2f), -dpToPx(2f));
         cavityRimPaint.setColor(Color.argb(70, 100, 116, 139));
-        canvas.drawRoundRect(rimRect, r + dpToPx(2f), r + dpToPx(2f), cavityRimPaint);
+        canvas.drawRoundRect(rimRect, r + dpToPx(1.5f), r + dpToPx(1.5f), cavityRimPaint);
 
         if (!isFilled) {
-            // Empty capsule pocket
             cavityEmptyPaint.setColor(Color.rgb(148, 163, 184));
             canvas.drawRoundRect(tempRect, r, r, cavityEmptyPaint);
 
-            // Shadow
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(120, 15, 23, 42));
             RectF innerShadow = new RectF(tempRect);
-            innerShadow.inset(dpToPx(2f), dpToPx(2f));
+            innerShadow.inset(dpToPx(1.5f), dpToPx(1.5f));
             canvas.drawRoundRect(innerShadow, r - dpToPx(1f), r - dpToPx(1f), shadowPaint);
 
-            // Reflective edge
             highlightPaint.setStyle(Paint.Style.STROKE);
-            highlightPaint.setStrokeWidth(dpToPx(1.2f));
+            highlightPaint.setStrokeWidth(dpToPx(1f));
             highlightPaint.setColor(Color.argb(160, 255, 255, 255));
-            canvas.drawLine(tempRect.left + dpToPx(2f), tempRect.top + dpToPx(4f), tempRect.left + dpToPx(2f), tempRect.bottom - dpToPx(6f), highlightPaint);
+            canvas.drawLine(tempRect.left + dpToPx(2f), tempRect.top + dpToPx(3f), tempRect.left + dpToPx(2f), tempRect.bottom - dpToPx(4f), highlightPaint);
         } else {
-            // Filled Yellow Capsule (Vitamin D)
-            // Drop shadow
             shadowPaint.setStyle(Paint.Style.FILL);
             shadowPaint.setColor(Color.argb(90, 0, 0, 0));
             RectF shadowR = new RectF(tempRect);
-            shadowR.offset(dpToPx(1.5f), dpToPx(2f));
+            shadowR.offset(dpToPx(1.2f), dpToPx(1.5f));
             canvas.drawRoundRect(shadowR, r, r, shadowPaint);
 
-            // Capsule body gradient
             pillPaint.setShader(new LinearGradient(
                     tempRect.left, tempRect.top, tempRect.right, tempRect.bottom,
                     new int[]{Color.rgb(253, 224, 71), Color.rgb(234, 179, 8), Color.rgb(202, 138, 4)},
@@ -340,18 +380,16 @@ public class BlisterCanvasView extends View {
             ));
             canvas.drawRoundRect(tempRect, r, r, pillPaint);
 
-            // Center dividing seam line
             Paint seamPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             seamPaint.setStyle(Paint.Style.STROKE);
-            seamPaint.setStrokeWidth(dpToPx(1.5f));
+            seamPaint.setStrokeWidth(dpToPx(1.2f));
             seamPaint.setColor(Color.argb(140, 161, 98, 7));
             canvas.drawLine(tempRect.left, cy, tempRect.right, cy, seamPaint);
 
-            // Capsule glossy white light reflection streak
             highlightPaint.setStyle(Paint.Style.STROKE);
-            highlightPaint.setStrokeWidth(dpToPx(1.6f));
+            highlightPaint.setStrokeWidth(dpToPx(1.4f));
             highlightPaint.setColor(Color.argb(180, 255, 255, 255));
-            canvas.drawLine(cx - r * 0.45f, tempRect.top + dpToPx(4f), cx - r * 0.45f, tempRect.bottom - dpToPx(6f), highlightPaint);
+            canvas.drawLine(cx - r * 0.45f, tempRect.top + dpToPx(3f), cx - r * 0.45f, tempRect.bottom - dpToPx(4f), highlightPaint);
         }
     }
 
@@ -376,31 +414,20 @@ public class BlisterCanvasView extends View {
     }
 
     private int getTouchedSlotIndex(float touchX, float touchY) {
-        float leftPadding = ("silver_round_blue".equals(blisterType)) ? dpToPx(26) : dpToPx(16);
-        float rightPadding = ("amber_round_yellow".equals(blisterType)) ? dpToPx(26) : dpToPx(16);
-        float topPadding = dpToPx(14);
-        float bottomPadding = dpToPx(14);
+        int bestIdx = -1;
+        float bestDistSq = Float.MAX_VALUE;
 
-        float gridLeft = blisterRect.left + leftPadding;
-        float gridTop = blisterRect.top + topPadding;
-        float gridWidth = blisterRect.width() - leftPadding - rightPadding;
-        float gridHeight = blisterRect.height() - topPadding - bottomPadding;
-
-        if (touchX < gridLeft || touchX > gridLeft + gridWidth ||
-            touchY < gridTop || touchY > gridTop + gridHeight) {
-            return -1;
+        for (int i = 0; i < slotStates.length; i++) {
+            float dx = touchX - slotX[i];
+            float dy = touchY - slotY[i];
+            float distSq = dx * dx + dy * dy;
+            float touchRadius = Math.max(dpToPx(20), slotRadius[i] * 1.5f);
+            if (distSq <= touchRadius * touchRadius && distSq < bestDistSq) {
+                bestDistSq = distSq;
+                bestIdx = i;
+            }
         }
-
-        float cellW = gridWidth / (float) cols;
-        float cellH = gridHeight / (float) rows;
-
-        int c = (int) ((touchX - gridLeft) / cellW);
-        int r = (int) ((touchY - gridTop) / cellH);
-
-        c = Math.max(0, Math.min(cols - 1, c));
-        r = Math.max(0, Math.min(rows - 1, r));
-
-        return r * cols + c;
+        return bestIdx;
     }
 
     private int dpToPx(float dp) {

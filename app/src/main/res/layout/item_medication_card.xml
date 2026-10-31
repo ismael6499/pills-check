@@ -4,12 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="20dp"
+    android:layout_marginBottom="8dp"
     android:background="@drawable/bg_card_rounded"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="10dp">
 
-    <!-- Card Header -->
+    <!-- Card Header Row -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_toStartOf="@id/tv_med_badge"
+            android:layout_toStartOf="@id/header_badges"
             android:orientation="vertical">
 
             <TextView
@@ -27,139 +27,142 @@
                 android:layout_height="wrap_content"
                 android:text="Folcres (Finasteride 1mg)"
                 android:textColor="@color/text_primary"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_med_sub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Silver Blister • 30 Tablets • Blue"
+                android:text="Silver • 30 Tabs • Blue"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_med_badge"
+        <LinearLayout
+            android:id="@+id/header_badges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/bg_badge_rounded"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:text="12/30 Active"
-            android:textColor="@color/primary_light"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:layout_centerVertical="true"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_yesterday_post"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#2638BDF8"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="3dp"
+                android:text="Yesterday: 13"
+                android:textColor="#7DD3FC"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_med_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_badge_rounded"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="3dp"
+                android:text="13/30"
+                android:textColor="@color/primary_light"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </RelativeLayout>
-
-    <!-- Yesterday Reference Banner (Post-intake) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="#2238BDF8"
-        android:orientation="horizontal"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="6dp"
-        android:gravity="center_vertical">
-
-        <View
-            android:layout_width="4dp"
-            android:layout_height="16dp"
-            android:background="@color/accent_blue"
-            android:layout_marginEnd="8dp" />
-
-        <TextView
-            android:id="@+id/tv_yesterday_post"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/label_yesterday_post"
-            android:textColor="#BAE6FD"
-            android:textSize="12.5sp"
-            android:textStyle="bold" />
-    </LinearLayout>
 
     <!-- Visual Blister Canvas -->
     <com.agustin.pillscheck.ui.BlisterCanvasView
         android:id="@+id/blister_canvas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="4dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="4dp"
-        android:text="@string/blister_tap_hint"
-        android:textColor="@color/text_muted"
-        android:textSize="11sp" />
-
-    <!-- Stock Summary Info -->
-    <LinearLayout
+    <!-- Card Footer Row -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_marginTop="4dp">
 
-        <TextView
-            android:id="@+id/tv_reserve_info"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Reserve: 3 blisters (90 pills)"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp" />
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/footer_actions"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_supply_days"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tv_reserve_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Res: 3 bl. (90 pills)"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:text="•"
+                android:textColor="@color/text_muted"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/tv_supply_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="103 days"
+                android:textColor="@color/accent_green"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/footer_actions"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="Total: 102 days"
-            android:textColor="@color/accent_green"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
 
-    <!-- Action Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:orientation="horizontal">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_blister"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="0dp"
+                android:text="@string/btn_open_blister"
+                android:textAllCaps="false"
+                android:textColor="@color/text_primary"
+                android:textSize="11sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card"
+                app:strokeWidth="1dp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_open_blister"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:text="@string/btn_open_blister"
-            android:textAllCaps="false"
-            android:textColor="@color/text_primary"
-            android:textSize="12sp"
-            app:strokeColor="@color/border_card"
-            app:cornerRadius="10dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_box"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="44dp"
-            android:layout_weight="1"
-            android:layout_marginStart="6dp"
-            android:text="@string/btn_add_box"
-            android:textAllCaps="false"
-            android:textColor="@color/primary_light"
-            android:textSize="12sp"
-            app:strokeColor="@color/border_card"
-            app:cornerRadius="10dp" />
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_box"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="0dp"
+                android:text="@string/btn_add_box"
+                android:textAllCaps="false"
+                android:textColor="@color/primary_light"
+                android:textSize="11sp"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

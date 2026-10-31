@@ -109,7 +109,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             tvReserveInfo.setText(context.getString(R.string.label_reserve_stock, med.getReserveBlisters(), reserveTotal));
 
             int totalDays = med.getTotalDaysSupply();
-            tvSupplyDays.setText(context.getString(R.string.label_total_supply, totalDays, med.getTotalPills()));
+            tvSupplyDays.setText(context.getString(R.string.label_total_supply, totalDays));
 
             blisterCanvas.configure(med.getRows(), med.getCols(), med.getBlisterType(), med.getSlotsArray());
 
@@ -118,7 +118,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                 med.setSlotsArray(currentSlots);
 
                 tvBadge.setText(context.getString(R.string.label_active_blister, remainingCount, med.getBlisterCapacity()));
-                tvSupplyDays.setText(context.getString(R.string.label_total_supply, med.getTotalDaysSupply(), med.getTotalPills()));
+                tvSupplyDays.setText(context.getString(R.string.label_total_supply, med.getTotalDaysSupply()));
 
                 Executors.newSingleThreadExecutor().execute(() -> {
                     AppDatabase.getInstance(context).medicationDao().update(med);
