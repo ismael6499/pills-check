@@ -136,6 +136,7 @@ public class StockManagementAdapter extends RecyclerView.Adapter<StockManagement
                                 newSlots[i] = true;
                             }
                             med.setSlotsArray(newSlots);
+                            med.setYesterdayCount(med.getBlisterCapacity());
                             saveAndNotify(med);
                         })
                         .setNegativeButton(R.string.dialog_cancel, null)

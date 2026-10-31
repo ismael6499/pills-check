@@ -8,6 +8,9 @@
     <string name="status_taken_all">¡Todas las pastillas tomadas hoy!</string>
     <string name="status_taken_at">Tomadas hoy a las %s</string>
     <string name="btn_take_all">Tomar Pastillas de Hoy (3)</string>
+    <string name="btn_take_all_format">Tomar Pastillas de Hoy (%d)</string>
+    <string name="btn_take_remaining">Tomar Restantes (%d)</string>
+    <string name="btn_take_remaining_one">Tomar Restante (1)</string>
     <string name="btn_undo_today">Deshacer Toma de Hoy</string>
     <string name="btn_history">Historial</string>
     <string name="btn_settings">Ajustes</string>
@@ -38,7 +41,7 @@
     <string name="dialog_cancel">Cancelar</string>
     <string name="dialog_custom_pills_hint">Cantidad de pastillas o cápsulas</string>
     <string name="dialog_undo_title">¿Deshacer la toma de hoy?</string>
-    <string name="dialog_undo_msg">Esto restaurará las 3 pastillas en los blísteres de hoy y quitará la marca de toma realizada.</string>
+    <string name="dialog_undo_msg">Esto restaurará las pastillas consumidas en los blísteres de hoy y quitará la marca de toma realizada.</string>
 
     <!-- Notifications -->
     <string name="notification_channel_name">Recordatorios de Tomas</string>

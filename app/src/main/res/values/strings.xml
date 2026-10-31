@@ -8,6 +8,9 @@
     <string name="status_taken_all">All pills taken today!</string>
     <string name="status_taken_at">Taken today at %s</string>
     <string name="btn_take_all">Take Today\'s Pills (3)</string>
+    <string name="btn_take_all_format">Take Today\'s Pills (%d)</string>
+    <string name="btn_take_remaining">Take Remaining (%d)</string>
+    <string name="btn_take_remaining_one">Take Remaining (1)</string>
     <string name="btn_undo_today">Undo Today\'s Intake</string>
     <string name="btn_history">History</string>
     <string name="btn_settings">Settings</string>
@@ -38,7 +41,7 @@
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_custom_pills_hint">Number of pills or capsules</string>
     <string name="dialog_undo_title">Undo today\'s intake?</string>
-    <string name="dialog_undo_msg">This will restore the 3 pills to today\'s blisters and clear today\'s taken mark.</string>
+    <string name="dialog_undo_msg">This will restore the consumed pills to today\'s blisters and clear today\'s intake mark.</string>
 
     <!-- Notifications -->
     <string name="notification_channel_name">Pill Intake Reminders</string>

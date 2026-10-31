@@ -215,6 +215,16 @@ public class MedicationEntity {
         return getTotalPills() / dose;
     }
 
+    @Ignore
+    public boolean isTakenToday() {
+        return yesterdayCount > 0 && getActivePillsCount() < yesterdayCount;
+    }
+
+    @Ignore
+    public boolean isPendingToday() {
+        return !isTakenToday();
+    }
+
     public int getNextSlotToTakeIndex() {
         boolean[] slots = getSlotsArray();
         int bestIndex = -1;

@@ -169,17 +169,17 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                 prefs.setCurrentDayTracker(todayDate);
             }
 
-            // Auto-detect if all 3 pills were manually popped:
+            // Auto-detect if all pills were manually popped:
             String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-            boolean allTakenManually = true;
+            int pendingCount = 0;
             for (MedicationEntity med : meds) {
-                if (med.getActivePillsCount() >= med.getYesterdayCount()) {
-                    allTakenManually = false;
-                    break;
+                if (med.isPendingToday()) {
+                    pendingCount++;
                 }
             }
+            boolean allTakenManually = (pendingCount == 0 && !meds.isEmpty());
 
-            if (allTakenManually && !meds.isEmpty() && !prefs.isTakenForDate(todayStr)) {
+            if (allTakenManually && !prefs.isTakenForDate(todayStr)) {
                 String timeStr = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
                 prefs.setLastIntakeDate(todayStr);
                 prefs.setLastIntakeTime(timeStr);
@@ -194,21 +194,37 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
 
             runOnUiThread(() -> {
                 adapter.setItems(meds);
-                updateIntakeStatusUI();
+                updateIntakeStatusUI(meds);
                 evaluatePharmacyAlerts(meds);
             });
         });
     }
 
-    private void updateIntakeStatusUI() {
+    private void updateIntakeStatusUI(List<MedicationEntity> meds) {
         String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
-        boolean taken = prefs.isTakenForDate(todayStr);
+        boolean allTakenPref = prefs.isTakenForDate(todayStr);
 
-        if (taken) {
+        int totalMeds = (meds != null) ? meds.size() : 0;
+        int pendingCount = 0;
+        if (meds != null) {
+            for (MedicationEntity med : meds) {
+                if (med.isPendingToday()) {
+                    pendingCount++;
+                }
+            }
+        }
+
+        boolean allTaken = allTakenPref || (totalMeds > 0 && pendingCount == 0);
+
+        if (allTaken) {
             tvTodayStatusBadge.setText(R.string.status_taken_all);
             tvTodayStatusBadge.setTextColor(ContextCompat.getColor(this, R.color.accent_green));
             tvTodayTakenTime.setVisibility(View.VISIBLE);
-            tvTodayTakenTime.setText(getString(R.string.status_taken_at, prefs.getLastIntakeTime()));
+            String takenTime = prefs.getLastIntakeTime();
+            if (takenTime == null || takenTime.isEmpty()) {
+                takenTime = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
+            }
+            tvTodayTakenTime.setText(getString(R.string.status_taken_at, takenTime));
 
             btnMainAction.setText(R.string.status_taken_all);
             btnMainAction.setEnabled(false);
@@ -221,12 +237,27 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             tvTodayStatusBadge.setTextColor(ContextCompat.getColor(this, R.color.accent_amber));
             tvTodayTakenTime.setVisibility(View.GONE);
 
-            btnMainAction.setText(R.string.btn_take_all);
+            String actionText;
+            if (pendingCount < totalMeds) {
+                if (pendingCount == 1) {
+                    actionText = getString(R.string.btn_take_remaining_one);
+                } else {
+                    actionText = getString(R.string.btn_take_remaining, pendingCount);
+                }
+            } else {
+                actionText = getString(R.string.btn_take_all_format, pendingCount);
+            }
+
+            btnMainAction.setText(actionText);
             btnMainAction.setEnabled(true);
             btnMainAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.primary));
 
+            if (fabTakeAll != null) {
+                fabTakeAll.setText(actionText.toUpperCase(Locale.getDefault()));
+                fabTakeAll.setVisibility(View.VISIBLE);
+            }
+
             btnUndoIntake.setVisibility(View.GONE);
-            if (fabTakeAll != null) fabTakeAll.setVisibility(View.VISIBLE);
         }
     }
 
@@ -247,8 +278,11 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             int vitDRemaining = 0;
 
             for (MedicationEntity med : meds) {
-                med.consumeOnePill();
-                db.medicationDao().update(med);
+                if (med.isPendingToday()) {
+                    med.consumeOnePill();
+                    db.medicationDao().update(med);
+                    GoogleTasksManager.getInstance(MainActivity.this).onMedicationTaken(med);
+                }
 
                 int remaining = med.getActivePillsCount();
                 if ("folcres".equals(med.getKey())) folcresRemaining = remaining;

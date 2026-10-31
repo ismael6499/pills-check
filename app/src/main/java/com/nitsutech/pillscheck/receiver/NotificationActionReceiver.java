@@ -68,9 +68,18 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             int minoxRemaining = 0;
             int vitDRemaining = 0;
 
+            // Save snapshot before intake for undo support
+            List<String> slotSnapshots = new java.util.ArrayList<>();
+            for (MedicationEntity m : meds) {
+                slotSnapshots.add(m.getKey() + ":::" + m.getActiveSlotsJson());
+            }
+            prefs.setLastIntakeSnapshot(new com.google.gson.Gson().toJson(slotSnapshots));
+
             for (MedicationEntity med : meds) {
-                med.consumeOnePill();
-                db.medicationDao().update(med);
+                if (med.isPendingToday()) {
+                    med.consumeOnePill();
+                    db.medicationDao().update(med);
+                }
 
                 int remaining = med.getActivePillsCount();
                 if ("folcres".equals(med.getKey())) folcresRemaining = remaining;

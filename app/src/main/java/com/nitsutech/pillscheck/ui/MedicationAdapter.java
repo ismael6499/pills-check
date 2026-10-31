@@ -122,7 +122,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
             com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
             String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-            boolean isCompletedToday = (med.getYesterdayCount() > 0 && med.getActivePillsCount() < med.getYesterdayCount()) || prefs.isTakenForDate(todayStr);
+            boolean isCompletedToday = med.isTakenToday() || prefs.isTakenForDate(todayStr);
 
             if (cardRoot != null) {
                 if (isCompletedToday) {
@@ -174,6 +174,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                             newSlots[i] = true;
                         }
                         med.setSlotsArray(newSlots);
+                        med.setYesterdayCount(med.getBlisterCapacity());
 
                         Executors.newSingleThreadExecutor().execute(() -> {
                             AppDatabase.getInstance(context).medicationDao().update(med);

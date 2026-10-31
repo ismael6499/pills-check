@@ -336,8 +336,10 @@ public class GoogleTasksManager {
                         int vitDRemaining = 0;
 
                         for (MedicationEntity med : meds) {
-                            med.consumeOnePill();
-db.medicationDao().update(med);
+                            if (med.isPendingToday()) {
+                                med.consumeOnePill();
+                                db.medicationDao().update(med);
+                            }
                             int remaining = med.getActivePillsCount();
                             if ("folcres".equals(med.getKey())) folcresRemaining = remaining;
                             else if ("minoxidil".equals(med.getKey())) minoxRemaining = remaining;
@@ -366,7 +368,7 @@ db.medicationDao().update(med);
                         String taskTitle = prefs.getMedicationGoogleTaskName(med.getKey(), med.getName());
                         boolean taskCompletedToday = isCompletedToday(tasks, taskTitle, todayDateStr);
 
-                        if (taskCompletedToday && med.getActivePillsCount() >= med.getYesterdayCount()) {
+                        if (taskCompletedToday && med.isPendingToday()) {
                             med.consumeOnePill();
                             db.medicationDao().update(med);
                             modifiedLocally = true;
