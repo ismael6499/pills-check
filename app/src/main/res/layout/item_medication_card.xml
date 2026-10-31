@@ -76,7 +76,7 @@
     </RelativeLayout>
 
     <!-- Visual Blister Canvas -->
-    <com.agustin.pillscheck.ui.BlisterCanvasView
+    <com.nitsutech.pillscheck.ui.BlisterCanvasView
         android:id="@+id/blister_canvas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

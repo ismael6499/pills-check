@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.ui;
+package com.nitsutech.pillscheck.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,11 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.data.AppDatabase;
-import com.agustin.pillscheck.data.entity.IntakeRecordEntity;
-import com.agustin.pillscheck.util.LocaleHelper;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.data.AppDatabase;
+import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
+import com.nitsutech.pillscheck.util.LocaleHelper;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;

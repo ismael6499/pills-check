@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.ui;
+package com.nitsutech.pillscheck.ui;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -22,14 +22,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.data.AppDatabase;
-import com.agustin.pillscheck.data.entity.IntakeRecordEntity;
-import com.agustin.pillscheck.data.entity.MedicationEntity;
-import com.agustin.pillscheck.receiver.NotificationActionReceiver;
-import com.agustin.pillscheck.util.AlarmScheduler;
-import com.agustin.pillscheck.util.LocaleHelper;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.data.AppDatabase;
+import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
+import com.nitsutech.pillscheck.data.entity.MedicationEntity;
+import com.nitsutech.pillscheck.receiver.NotificationActionReceiver;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.LocaleHelper;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 

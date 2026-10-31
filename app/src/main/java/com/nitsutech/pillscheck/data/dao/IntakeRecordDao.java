@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.data.dao;
+package com.nitsutech.pillscheck.data.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -6,7 +6,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.agustin.pillscheck.data.entity.IntakeRecordEntity;
+import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
 
 import java.util.List;
 

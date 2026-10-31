@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.data.entity;
+package com.nitsutech.pillscheck.data.entity;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;

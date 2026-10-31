@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.ui;
+package com.nitsutech.pillscheck.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;

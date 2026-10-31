@@ -1,14 +1,14 @@
-package com.agustin.pillscheck;
+package com.nitsutech.pillscheck;
 
 import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.agustin.pillscheck.data.AppDatabase;
-import com.agustin.pillscheck.receiver.ReminderAlarmReceiver;
-import com.agustin.pillscheck.util.AlarmScheduler;
-import com.agustin.pillscheck.util.LocaleHelper;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.data.AppDatabase;
+import com.nitsutech.pillscheck.receiver.ReminderAlarmReceiver;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.LocaleHelper;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 
 import java.util.concurrent.Executors;
 

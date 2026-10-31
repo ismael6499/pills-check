@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.data;
+package com.nitsutech.pillscheck.data;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,10 +7,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.agustin.pillscheck.data.dao.IntakeRecordDao;
-import com.agustin.pillscheck.data.dao.MedicationDao;
-import com.agustin.pillscheck.data.entity.IntakeRecordEntity;
-import com.agustin.pillscheck.data.entity.MedicationEntity;
+import com.nitsutech.pillscheck.data.dao.IntakeRecordDao;
+import com.nitsutech.pillscheck.data.dao.MedicationDao;
+import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
+import com.nitsutech.pillscheck.data.entity.MedicationEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.util;
+package com.nitsutech.pillscheck.util;
 
 import android.content.Context;
 import android.content.res.Configuration;

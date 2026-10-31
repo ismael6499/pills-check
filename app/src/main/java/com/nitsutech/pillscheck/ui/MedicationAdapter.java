@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.ui;
+package com.nitsutech.pillscheck.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,9 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.data.AppDatabase;
-import com.agustin.pillscheck.data.entity.MedicationEntity;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.data.AppDatabase;
+import com.nitsutech.pillscheck.data.entity.MedicationEntity;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -116,7 +116,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             // Highlight next pill to be taken today with a subtle thin border
             int nextSlotToTake = -1;
             String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-            com.agustin.pillscheck.util.PreferenceHelper prefs = new com.agustin.pillscheck.util.PreferenceHelper(context);
+            com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
             if (!prefs.isTakenForDate(todayStr)) {
                 boolean[] slots = med.getSlotsArray();
                 for (int i = slots.length - 1; i >= 0; i--) {

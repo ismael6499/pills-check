@@ -1,7 +1,7 @@
 # AGENTS.md — PillsCheck (Android App)
 
 ## Project Overview
-- **Package:** `com.agustin.pillscheck`
+- **Package:** `com.nitsutech.pillscheck`
 - **Application:** PillsCheck (Daily Blister & Medication Stock Tracker)
 - **Language & Platform:** Java, Native Android SDK (Min SDK 26, Target/Compile SDK 34)
 - **User:** Agustín Acosta (`acostaagustin6499@gmail.com`). Always address him directly as **Agustín** in friendly Spanish (*vos*). Never address as Breto; never use formal *usted*.

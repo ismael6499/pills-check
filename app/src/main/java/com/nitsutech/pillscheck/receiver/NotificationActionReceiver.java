@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.receiver;
+package com.nitsutech.pillscheck.receiver;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -9,12 +9,12 @@ import android.os.Looper;
 import android.widget.Toast;
 
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.data.AppDatabase;
-import com.agustin.pillscheck.data.entity.IntakeRecordEntity;
-import com.agustin.pillscheck.data.entity.MedicationEntity;
-import com.agustin.pillscheck.util.AlarmScheduler;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.data.AppDatabase;
+import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
+import com.nitsutech.pillscheck.data.entity.MedicationEntity;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,10 +24,10 @@ import java.util.concurrent.Executors;
 
 public class NotificationActionReceiver extends BroadcastReceiver {
 
-    public static final String ACTION_TAKE_NOW = "com.agustin.pillscheck.ACTION_TAKE_NOW";
-    public static final String ACTION_SNOOZE = "com.agustin.pillscheck.ACTION_SNOOZE";
-    public static final String ACTION_SILENCE_TODAY = "com.agustin.pillscheck.ACTION_SILENCE_TODAY";
-    public static final String ACTION_DATA_CHANGED = "com.agustin.pillscheck.DATA_CHANGED";
+    public static final String ACTION_TAKE_NOW = "com.nitsutech.pillscheck.ACTION_TAKE_NOW";
+    public static final String ACTION_SNOOZE = "com.nitsutech.pillscheck.ACTION_SNOOZE";
+    public static final String ACTION_SILENCE_TODAY = "com.nitsutech.pillscheck.ACTION_SILENCE_TODAY";
+    public static final String ACTION_DATA_CHANGED = "com.nitsutech.pillscheck.DATA_CHANGED";
 
     @Override
     public void onReceive(Context context, Intent intent) {

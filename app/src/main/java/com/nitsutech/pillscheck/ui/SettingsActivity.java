@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.ui;
+package com.nitsutech.pillscheck.ui;
 
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -16,10 +16,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.util.AlarmScheduler;
-import com.agustin.pillscheck.util.LocaleHelper;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.LocaleHelper;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.text.SimpleDateFormat;

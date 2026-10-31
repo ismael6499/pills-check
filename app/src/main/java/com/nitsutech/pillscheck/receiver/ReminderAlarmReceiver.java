@@ -1,4 +1,4 @@
-package com.agustin.pillscheck.receiver;
+package com.nitsutech.pillscheck.receiver;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,10 +13,10 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
-import com.agustin.pillscheck.R;
-import com.agustin.pillscheck.ui.MainActivity;
-import com.agustin.pillscheck.util.AlarmScheduler;
-import com.agustin.pillscheck.util.PreferenceHelper;
+import com.nitsutech.pillscheck.R;
+import com.nitsutech.pillscheck.ui.MainActivity;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.PreferenceHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

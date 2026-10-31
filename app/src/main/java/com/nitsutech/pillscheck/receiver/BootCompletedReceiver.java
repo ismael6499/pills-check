@@ -1,10 +1,10 @@
-package com.agustin.pillscheck.receiver;
+package com.nitsutech.pillscheck.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.agustin.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.AlarmScheduler;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
