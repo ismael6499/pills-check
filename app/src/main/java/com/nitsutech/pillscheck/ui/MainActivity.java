@@ -223,15 +223,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             int vitDRemaining = 0;
 
             for (MedicationEntity med : meds) {
-                boolean[] slots = med.getSlotsArray();
-                // Consume rightmost filled pill
-                for (int i = slots.length - 1; i >= 0; i--) {
-                    if (slots[i]) {
-                        slots[i] = false;
-                        break;
-                    }
-                }
-                med.setSlotsArray(slots);
+                med.consumeOnePill();
                 db.medicationDao().update(med);
 
                 int remaining = med.getActivePillsCount();

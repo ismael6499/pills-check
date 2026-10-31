@@ -214,4 +214,48 @@ public class MedicationEntity {
         int dose = dailyDose > 0 ? dailyDose : 1;
         return getTotalPills() / dose;
     }
+
+    public int getNextSlotToTakeIndex() {
+        boolean[] slots = getSlotsArray();
+        int bestIndex = -1;
+        float bestX = -1f;
+        int bestY = -1;
+
+        boolean isFolcres = "folcres".equals(key) || (rows == 4 && cols == 8);
+
+        for (int i = 0; i < slots.length; i++) {
+            if (slots[i]) {
+                float x;
+                int y;
+                if (isFolcres) {
+                    if (i < 8) { y = 0; x = i; }
+                    else if (i < 15) { y = 1; x = 0.5f + (i - 8); }
+                    else if (i < 23) { y = 2; x = (i - 15); }
+                    else { y = 3; x = 0.5f + (i - 23); }
+                } else {
+                    int c = cols > 0 ? cols : 1;
+                    y = i / c;
+                    x = i % c;
+                }
+
+                if (x > bestX || (Math.abs(x - bestX) < 0.001f && y > bestY)) {
+                    bestX = x;
+                    bestY = y;
+                    bestIndex = i;
+                }
+            }
+        }
+        return bestIndex;
+    }
+
+    public boolean consumeOnePill() {
+        int nextSlot = getNextSlotToTakeIndex();
+        if (nextSlot >= 0) {
+            boolean[] slots = getSlotsArray();
+            slots[nextSlot] = false;
+            setSlotsArray(slots);
+            return true;
+        }
+        return false;
+    }
 }

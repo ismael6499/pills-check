@@ -331,14 +331,7 @@ public class GoogleTasksManager {
 
                         for (MedicationEntity med : meds) {
                             if (med.getActivePillsCount() >= med.getYesterdayCount()) {
-                                boolean[] slots = med.getSlotsArray();
-                                for (int i = slots.length - 1; i >= 0; i--) {
-                                    if (slots[i]) {
-                                        slots[i] = false;
-                                        break;
-                                    }
-                                }
-                                med.setSlotsArray(slots);
+                                med.consumeOnePill();
                                 db.medicationDao().update(med);
                             }
                             int remaining = med.getActivePillsCount();
@@ -370,14 +363,7 @@ public class GoogleTasksManager {
                         boolean taskCompletedToday = isCompletedToday(tasks, taskTitle, todayDateStr);
 
                         if (taskCompletedToday && med.getActivePillsCount() >= med.getYesterdayCount()) {
-                            boolean[] slots = med.getSlotsArray();
-                            for (int i = slots.length - 1; i >= 0; i--) {
-                                if (slots[i]) {
-                                    slots[i] = false;
-                                    break;
-                                }
-                            }
-                            med.setSlotsArray(slots);
+                            med.consumeOnePill();
                             db.medicationDao().update(med);
                             modifiedLocally = true;
                         }

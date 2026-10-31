@@ -69,15 +69,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             int vitDRemaining = 0;
 
             for (MedicationEntity med : meds) {
-                boolean[] slots = med.getSlotsArray();
-                // Consume the rightmost filled slot (matching physical taking order)
-                for (int i = slots.length - 1; i >= 0; i--) {
-                    if (slots[i]) {
-                        slots[i] = false;
-                        break;
-                    }
-                }
-                med.setSlotsArray(slots);
+                med.consumeOnePill();
                 db.medicationDao().update(med);
 
                 int remaining = med.getActivePillsCount();
