@@ -86,6 +86,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             tvSub = itemView.findViewById(R.id.tv_med_sub);
             tvBadge = itemView.findViewById(R.id.tv_med_badge);
             tvYesterdayPost = itemView.findViewById(R.id.tv_yesterday_post);
+            tvYesterdayPost.setClickable(true);
+            tvYesterdayPost.setFocusable(true);
             blisterCanvas = itemView.findViewById(R.id.blister_canvas);
             tvReserveInfo = itemView.findViewById(R.id.tv_reserve_info);
             tvSupplyDays = itemView.findViewById(R.id.tv_supply_days);
@@ -105,6 +107,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             } else {
                 tvYesterdayPost.setText(context.getString(R.string.label_yesterday_none));
             }
+            tvYesterdayPost.setOnClickListener(v -> showEditYesterdayDialog(med));
 
             int reserveTotal = (med.getReserveBlisters() * med.getBlisterCapacity()) + med.getReserveLoosePills();
             tvReserveInfo.setText(context.getString(R.string.label_reserve_stock, med.getReserveBlisters(), reserveTotal));
@@ -224,6 +227,38 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                             } catch (NumberFormatException e) {
                                 Toast.makeText(context, "Invalid number", Toast.LENGTH_SHORT).show();
                             }
+                        }
+                    })
+                    .setNegativeButton(R.string.dialog_cancel, null)
+                    .show();
+        }
+    
+        private void showEditYesterdayDialog(MedicationEntity med) {
+            final EditText input = new EditText(context);
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+            input.setText(String.valueOf(med.getYesterdayCount()));
+            input.setSelection(input.getText().length());
+            input.setPadding((int) (16 * context.getResources().getDisplayMetrics().density), 
+                              (int) (12 * context.getResources().getDisplayMetrics().density), 
+                              (int) (16 * context.getResources().getDisplayMetrics().density), 
+                              (int) (12 * context.getResources().getDisplayMetrics().density));
+
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.dialog_edit_yesterday_title)
+                    .setMessage(context.getString(R.string.dialog_edit_yesterday_msg, med.getName()))
+                    .setView(input)
+                    .setPositiveButton(R.string.dialog_confirm, (dialog, which) -> {
+                        String str = input.getText().toString().trim();
+                        if (!str.isEmpty()) {
+                            try {
+                                int val = Math.max(0, Integer.parseInt(str));
+                                med.setYesterdayCount(val);
+                                Executors.newSingleThreadExecutor().execute(() -> {
+                                    AppDatabase.getInstance(context).medicationDao().update(med);
+                                });
+                                tvYesterdayPost.setText(context.getString(R.string.label_yesterday_post, val));
+                                if (stockListener != null) stockListener.onStockChanged();
+                            } catch (NumberFormatException ignored) {}
                         }
                     })
                     .setNegativeButton(R.string.dialog_cancel, null)

@@ -151,6 +151,22 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             db.medicationDao().removeDuplicateKeys();
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
 
+            // Midnight rollover: if a new day arrived and yesterday was taken, update yesterdayCount
+            String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            String trackedDay = prefs.getCurrentDayTracker();
+            if (trackedDay.isEmpty()) {
+                prefs.setCurrentDayTracker(todayDate);
+            } else if (!trackedDay.equals(todayDate)) {
+                // New day! If yesterday was marked taken, active pills count at end of yesterday becomes yesterdayCount
+                if (prefs.isTakenForDate(trackedDay)) {
+                    for (MedicationEntity med : meds) {
+                        med.setYesterdayCount(med.getActivePillsCount());
+                        db.medicationDao().update(med);
+                    }
+                }
+                prefs.setCurrentDayTracker(todayDate);
+            }
+
             // Auto-detect if all 3 pills were manually popped:
             String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
             boolean allTakenManually = true;
@@ -215,6 +231,12 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
     private void handleMainActionClick() {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
+            // Save snapshot before intake
+            List<String> slotSnapshots = new java.util.ArrayList<>();
+            for (MedicationEntity m : meds) {
+                slotSnapshots.add(m.getKey() + ":::" + m.getActiveSlotsJson());
+            }
+            prefs.setLastIntakeSnapshot(new com.google.gson.Gson().toJson(slotSnapshots));
             String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
             String timeStr = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
 
@@ -269,17 +291,40 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                         }
 
                         List<MedicationEntity> meds = db.medicationDao().getAllMedications();
-                        for (MedicationEntity med : meds) {
-                            boolean[] slots = med.getSlotsArray();
-                            // Restore first empty slot
-                            for (int i = 0; i < slots.length; i++) {
-                                if (!slots[i]) {
-                                    slots[i] = true;
-                                    break;
+                        String snapshot = prefs.getLastIntakeSnapshot();
+                        if (snapshot != null && !snapshot.isEmpty()) {
+                            try {
+                                java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<List<String>>(){}.getType();
+                                List<String> list = new com.google.gson.Gson().fromJson(snapshot, listType);
+                                if (list != null) {
+                                    for (String item : list) {
+                                        String[] parts = item.split(":::");
+                                        if (parts.length == 2) {
+                                            for (MedicationEntity med : meds) {
+                                                if (med.getKey().equals(parts[0])) {
+                                                    med.setActiveSlotsJson(parts[1]);
+                                                    db.medicationDao().update(med);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
+                            } catch (Exception ignored) {}
+                            prefs.setLastIntakeSnapshot("");
+                        } else {
+                            // Fallback if no snapshot
+                            for (MedicationEntity med : meds) {
+                                boolean[] slots = med.getSlotsArray();
+                                for (int i = 0; i < slots.length; i++) {
+                                    if (!slots[i]) {
+                                        slots[i] = true;
+                                        break;
+                                    }
+                                }
+                                med.setSlotsArray(slots);
+                                db.medicationDao().update(med);
                             }
-                            med.setSlotsArray(slots);
-                            db.medicationDao().update(med);
                         }
 
                         prefs.setLastIntakeDate("");

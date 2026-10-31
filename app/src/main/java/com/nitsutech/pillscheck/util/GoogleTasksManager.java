@@ -324,16 +324,20 @@ public class GoogleTasksManager {
                     boolean taskCompletedToday = isCompletedToday(tasks, targetTitle, todayDateStr);
 
                     if (taskCompletedToday && !prefs.isTakenForDate(todayDateStr)) {
+                        // Save snapshot for exact undo
+                        List<String> slotSnapshots = new ArrayList<>();
+                        for (MedicationEntity m : meds) {
+                            slotSnapshots.add(m.getKey() + ":::" + m.getActiveSlotsJson());
+                        }
+                        prefs.setLastIntakeSnapshot(new Gson().toJson(slotSnapshots));
                         // Take 1 pill from each medication
                         int folcresRemaining = 0;
                         int minoxRemaining = 0;
                         int vitDRemaining = 0;
 
                         for (MedicationEntity med : meds) {
-                            if (med.getActivePillsCount() >= med.getYesterdayCount()) {
-                                med.consumeOnePill();
-                                db.medicationDao().update(med);
-                            }
+                            med.consumeOnePill();
+db.medicationDao().update(med);
                             int remaining = med.getActivePillsCount();
                             if ("folcres".equals(med.getKey())) folcresRemaining = remaining;
                             else if ("minoxidil".equals(med.getKey())) minoxRemaining = remaining;

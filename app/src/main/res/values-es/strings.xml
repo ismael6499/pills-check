@@ -102,4 +102,6 @@
     
     <string name="med_vitamind_title">Vitamina D</string>
     <string name="med_vitamind_sub">Blíster Plateado - 10 Cápsulas - Amarillo</string>
+    <string name="dialog_edit_yesterday_title">Editar Base de Ayer</string>
+    <string name="dialog_edit_yesterday_msg">Modificá la cantidad de pastillas que quedaron ayer en %s:</string>
 </resources>

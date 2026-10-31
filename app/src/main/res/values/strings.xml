@@ -102,4 +102,6 @@
     
     <string name="med_vitamind_title">Vitamin D</string>
     <string name="med_vitamind_sub">Silver Blister - 10 Capsules - Yellow</string>
+    <string name="dialog_edit_yesterday_title">Edit Yesterday\'s Baseline</string>
+    <string name="dialog_edit_yesterday_msg">Set yesterday\'s post-intake pill count for %s:</string>
 </resources>

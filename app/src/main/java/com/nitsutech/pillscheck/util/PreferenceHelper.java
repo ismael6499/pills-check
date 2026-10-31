@@ -161,4 +161,23 @@ public class PreferenceHelper {
     public void setMedicationGoogleTaskName(String medKey, String taskName) {
         prefs.edit().putString(KEY_GOOGLE_TASKS_MED_PREFIX + medKey, taskName).apply();
     }
+
+    private static final String KEY_LAST_INTAKE_SNAPSHOT = "last_intake_snapshot";
+    private static final String KEY_CURRENT_DAY_TRACKER = "current_day_tracker";
+
+    public String getLastIntakeSnapshot() {
+        return prefs.getString(KEY_LAST_INTAKE_SNAPSHOT, "");
+    }
+
+    public void setLastIntakeSnapshot(String snapshot) {
+        prefs.edit().putString(KEY_LAST_INTAKE_SNAPSHOT, snapshot).apply();
+    }
+
+    public String getCurrentDayTracker() {
+        return prefs.getString(KEY_CURRENT_DAY_TRACKER, "");
+    }
+
+    public void setCurrentDayTracker(String dateStr) {
+        prefs.edit().putString(KEY_CURRENT_DAY_TRACKER, dateStr).apply();
+    }
 }
