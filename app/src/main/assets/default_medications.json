@@ -2,9 +2,9 @@
   {
     "key": "med_1",
     "name": "Medication 1 (Morning)",
-    "subtitle": "Silver Blister • 30 Tablets (3x10) • Blue",
-    "rows": 3,
-    "cols": 10,
+    "subtitle": "Silver Blister - 30 Tablets - Blue",
+    "rows": 4,
+    "cols": 8,
     "blisterCapacity": 30,
     "activeSlotsJson": "[true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true]",
     "reserveBlisters": 1,
@@ -17,7 +17,7 @@
   {
     "key": "med_2",
     "name": "Medication 2 (Afternoon)",
-    "subtitle": "Amber Blister • 10 Tablets (2x5) • Yellow",
+    "subtitle": "Amber Blister - 10 Tablets (2x5) - Yellow",
     "rows": 2,
     "cols": 5,
     "blisterCapacity": 10,
@@ -32,7 +32,7 @@
   {
     "key": "med_3",
     "name": "Medication 3 (Evening)",
-    "subtitle": "Silver Blister • 10 Capsules (2x5) • Yellow",
+    "subtitle": "Silver Blister - 10 Capsules (2x5) - Yellow",
     "rows": 2,
     "cols": 5,
     "blisterCapacity": 10,

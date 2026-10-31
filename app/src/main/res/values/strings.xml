@@ -76,11 +76,11 @@
 
     <!-- Medication Default Titles & Subtitles -->
     <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
-    <string name="med_folcres_sub">Silver Blister • 30 Tablets (3x10) • Blue</string>
+    <string name="med_folcres_sub">Silver Blister - 30 Tablets - Blue</string>
     
     <string name="med_minoxidil_title">Minoxidil 2.5mg</string>
-    <string name="med_minoxidil_sub">Amber Blister • 10 Tablets (2x5) • Yellow</string>
+    <string name="med_minoxidil_sub">Amber Blister - 10 Tablets - Yellow</string>
     
     <string name="med_vitamind_title">Vitamin D</string>
-    <string name="med_vitamind_sub">Silver Blister • 10 Capsules (2x5) • Yellow</string>
+    <string name="med_vitamind_sub">Silver Blister - 10 Capsules - Yellow</string>
 </resources>

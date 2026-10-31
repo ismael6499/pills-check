@@ -76,11 +76,11 @@
 
     <!-- Medication Default Titles & Subtitles -->
     <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
-    <string name="med_folcres_sub">Blíster Plateado • 30 Comprimidos (3x10) • Azul</string>
+    <string name="med_folcres_sub">Blíster Plateado - 30 Comprimidos - Azul</string>
     
     <string name="med_minoxidil_title">Minoxidil 2.5mg</string>
-    <string name="med_minoxidil_sub">Blíster Ámbar • 10 Comprimidos (2x5) • Amarillo</string>
+    <string name="med_minoxidil_sub">Blíster Ámbar - 10 Comprimidos - Amarillo</string>
     
     <string name="med_vitamind_title">Vitamina D</string>
-    <string name="med_vitamind_sub">Blíster Plateado • 10 Cápsulas (2x5) • Amarillo</string>
+    <string name="med_vitamind_sub">Blíster Plateado - 10 Cápsulas - Amarillo</string>
 </resources>

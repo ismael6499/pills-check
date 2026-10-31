@@ -19,7 +19,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.List;
 
-@Database(entities = {MedicationEntity.class, IntakeRecordEntity.class}, version = 1, exportSchema = false)
+@Database(entities = {MedicationEntity.class, IntakeRecordEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String TAG = "AppDatabase";

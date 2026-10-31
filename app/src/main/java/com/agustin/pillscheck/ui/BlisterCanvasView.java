@@ -60,7 +60,7 @@ public class BlisterCanvasView extends View {
     }
 
     private void init() {
-        textPaint.setTextSize(spToPx(9));
+        textPaint.setTextSize(spToPx(8.5f));
         textPaint.setLetterSpacing(0.08f);
         textPaint.setFakeBoldText(true);
 
@@ -116,14 +116,14 @@ public class BlisterCanvasView extends View {
 
         int targetWidth = widthMode == MeasureSpec.EXACTLY ? widthSize : dpToPx(340);
 
-        // Compact target heights so all 3 blisters fit comfortably on screen
+        // Well-proportioned heights that fit all 3 blisters on screen without distortion
         int targetHeight;
         if (isFolcresStaggered()) {
-            targetHeight = dpToPx(88); // 4 rows
+            targetHeight = dpToPx(112); // 4 rows
         } else if ("silver_capsule_yellow".equals(blisterType)) {
-            targetHeight = dpToPx(64); // 2 rows capsules
+            targetHeight = dpToPx(84);  // 2 rows vertical capsules
         } else {
-            targetHeight = dpToPx(58); // 2 rows round
+            targetHeight = dpToPx(76);  // 2 rows round tablets
         }
 
         setMeasuredDimension(targetWidth, targetHeight);
@@ -195,7 +195,7 @@ public class BlisterCanvasView extends View {
 
     private void drawEmbossedDetails(Canvas canvas, RectF rect) {
         if (isFolcresStaggered()) {
-            // Embossed text on RIGHT margin (as in physical blister)
+            // Embossed text on RIGHT margin (matching physical blister)
             canvas.save();
             canvas.rotate(90, rect.right - dpToPx(10), rect.centerY());
             textPaint.setColor(Color.argb(120, 100, 116, 139));
@@ -212,25 +212,30 @@ public class BlisterCanvasView extends View {
     }
 
     private void drawFolcresStaggeredCavities(Canvas canvas, RectF rect) {
-        float leftMargin = dpToPx(14);
-        float rightMargin = dpToPx(24); // room for embossed text
-        float topMargin = dpToPx(8);
-        float bottomMargin = dpToPx(8);
+        float leftMargin = dpToPx(12);
+        float rightMargin = dpToPx(26); // room for embossed batch text
+        float topMargin = dpToPx(6);
+        float bottomMargin = dpToPx(6);
 
         float availW = rect.width() - leftMargin - rightMargin;
         float availH = rect.height() - topMargin - bottomMargin;
 
         float stepX = availW / 8.0f;
         float stepY = availH / 4.0f;
-        float radius = Math.min(stepX, stepY) * 0.40f;
+        float radius = Math.min(stepX * 0.40f, stepY * 0.42f);
 
-        int[] rowCols = new int[]{7, 8, 7, 8};
+        // Row 0: 8 cavities (starts on left)
+        // Row 1: 7 cavities (shifted right by half step)
+        // Row 2: 8 cavities (starts on left)
+        // Row 3: 7 cavities (shifted right by half step)
+        int[] rowCols = new int[]{8, 7, 8, 7};
         int slotIndex = 0;
 
         for (int r = 0; r < 4; r++) {
             int colsInRow = rowCols[r];
             float y = rect.top + topMargin + (r * stepY) + (stepY / 2.0f);
-            float startX = rect.left + leftMargin + (r % 2 == 0 ? stepX * 0.5f : 0f);
+            // Even rows (0, 2) start on the left; Odd rows (1, 3) shift right by half a step
+            float startX = rect.left + leftMargin + (r % 2 == 1 ? stepX * 0.5f : 0f);
 
             for (int c = 0; c < colsInRow; c++) {
                 if (slotIndex >= slotStates.length) break;
@@ -249,7 +254,7 @@ public class BlisterCanvasView extends View {
 
     private void drawRegularGridCavities(Canvas canvas, RectF rect) {
         float leftPadding = dpToPx(14);
-        float rightPadding = dpToPx(24);
+        float rightPadding = dpToPx(26);
         float topPadding = dpToPx(6);
         float bottomPadding = dpToPx(6);
 
@@ -273,12 +278,13 @@ public class BlisterCanvasView extends View {
                 boolean isFilled = slotStates[index];
 
                 if ("silver_capsule_yellow".equals(blisterType)) {
-                    float capW = cellW * 0.44f;
-                    float capH = cellH * 0.76f;
-                    slotRadius[index] = Math.max(capW, capH) / 2f;
+                    // Vertical elongated capsule (standing upright: height > width)
+                    float capW = Math.min(dpToPx(16), cellW * 0.35f);
+                    float capH = Math.min(dpToPx(32), cellH * 0.78f);
+                    slotRadius[index] = capH / 2f;
                     drawCapsuleSlot(canvas, cx, cy, capW, capH, isFilled);
                 } else {
-                    float radius = Math.min(cellW, cellH) * 0.38f;
+                    float radius = Math.min(cellW * 0.36f, cellH * 0.38f);
                     slotRadius[index] = radius;
                     drawRoundSlot(canvas, cx, cy, radius, isFilled);
                 }
