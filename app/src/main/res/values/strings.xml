@@ -104,4 +104,17 @@
     <string name="med_vitamind_sub">Silver Blister - 10 Capsules - Yellow</string>
     <string name="dialog_edit_yesterday_title">Edit Yesterday\'s Baseline</string>
     <string name="dialog_edit_yesterday_msg">Set yesterday\'s post-intake pill count for %s:</string>
+<!-- Stock Management Screen -->
+    <string name="stock_management_title">Stock &amp; Reserves</string>
+    <string name="btn_manage_stock">Stock</string>
+    <string name="stock_boxes_label">Boxes in Reserve</string>
+    <string name="stock_blisters_label">Reserve Blisters</string>
+    <string name="stock_loose_label">Loose Pills</string>
+    <string name="stock_open_blister_action">Open Blister</string>
+    <string name="stock_box_detail_format">1 Box = %1$d blisters (%2$d pills)</string>
+    <string name="dialog_exact_stock_title">Edit Exact Stock for %s</string>
+    <string name="dialog_exact_blisters_hint">Reserve blisters</string>
+    <string name="dialog_exact_loose_hint">Loose pills</string>
+    <string name="btn_edit_exact">Direct Edit</string>
+    <string name="stock_active_status">Active blister: %1$d / %2$d pills</string>
 </resources>

@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         tvPharmacyDesc = findViewById(R.id.tv_pharmacy_desc);
         rvMedications = findViewById(R.id.rv_medications);
 
+        ImageButton btnStock = findViewById(R.id.btn_open_stock);
+        if (btnStock != null) btnStock.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, StockManagementActivity.class)));
         ImageButton btnHistory = findViewById(R.id.btn_open_history);
         ImageButton btnSettings = findViewById(R.id.btn_open_settings);
 

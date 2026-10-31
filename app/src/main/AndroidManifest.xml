@@ -38,6 +38,12 @@
             android:label="@string/history_title"
             android:parentActivityName=".ui.MainActivity" />
 
+        <activity
+            android:name=".ui.StockManagementActivity"
+            android:exported="false"
+            android:label="@string/stock_management_title"
+            android:parentActivityName=".ui.MainActivity" />
+
         <receiver
             android:name=".receiver.ReminderAlarmReceiver"
             android:exported="false" />

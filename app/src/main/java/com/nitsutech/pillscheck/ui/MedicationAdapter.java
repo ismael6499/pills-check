@@ -2,6 +2,7 @@ package com.nitsutech.pillscheck.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,7 +79,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
         private final TextView tvReserveInfo;
         private final TextView tvSupplyDays;
         private final MaterialButton btnOpenBlister;
-        private final MaterialButton btnAddBox;
+        private final MaterialButton btnManageStock;
+        private final View cardRoot;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -92,7 +94,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             tvReserveInfo = itemView.findViewById(R.id.tv_reserve_info);
             tvSupplyDays = itemView.findViewById(R.id.tv_supply_days);
             btnOpenBlister = itemView.findViewById(R.id.btn_open_blister);
-            btnAddBox = itemView.findViewById(R.id.btn_add_box);
+            btnManageStock = itemView.findViewById(R.id.btn_manage_stock);
+            cardRoot = itemView.findViewById(R.id.card_root_container);
         }
 
         public void bind(MedicationEntity med) {
@@ -117,11 +120,21 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
             blisterCanvas.configure(med.getRows(), med.getCols(), med.getBlisterType(), med.getSlotsArray());
 
+            com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
+            String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+            boolean isCompletedToday = (med.getYesterdayCount() > 0 && med.getActivePillsCount() < med.getYesterdayCount()) || prefs.isTakenForDate(todayStr);
+
+            if (cardRoot != null) {
+                if (isCompletedToday) {
+                    cardRoot.setBackgroundResource(R.drawable.bg_card_rounded_completed);
+                } else {
+                    cardRoot.setBackgroundResource(R.drawable.bg_card_rounded);
+                }
+            }
+
             // Highlight next pill to be taken today with a subtle thin border
             int nextSlotToTake = -1;
-            String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-            com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
-            if (!prefs.isTakenForDate(todayStr)) {
+            if (!isCompletedToday) {
                 nextSlotToTake = med.getNextSlotToTakeIndex();
             }
             blisterCanvas.setHighlightedSlotIndex(nextSlotToTake);
@@ -144,7 +157,8 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
             });
 
             btnOpenBlister.setOnClickListener(v -> showOpenBlisterDialog(med));
-            btnAddBox.setOnClickListener(v -> showAddStockDialog(med));
+            btnManageStock.setOnClickListener(v -> context.startActivity(new Intent(context, StockManagementActivity.class)));
+            tvReserveInfo.setOnClickListener(v -> context.startActivity(new Intent(context, StockManagementActivity.class)));
         }
 
         private void showOpenBlisterDialog(MedicationEntity med) {

@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_card_rounded"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <!-- Header: Name & Supply Badge -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/tv_stock_total_days"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_stock_med_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Folcres (Finasteride 1mg)"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_stock_med_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Silver • 30 Tabs • Blue"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_stock_total_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/bg_badge_rounded"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="102 days"
+            android:textColor="@color/accent_green"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_card"
+        android:layout_marginVertical="10dp" />
+
+    <!-- Active Blister Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_stock_active_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/btn_stock_open_blister"
+            android:text="Active blister: 12 / 30 pills"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_stock_open_blister"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:minWidth="0dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="0dp"
+            android:text="@string/stock_open_blister_action"
+            android:textAllCaps="false"
+            android:textColor="@color/primary_light"
+            android:textSize="12sp"
+            app:cornerRadius="6dp"
+            app:strokeColor="@color/border_card"
+            app:strokeWidth="1dp" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_card"
+        android:layout_marginVertical="10dp" />
+
+    <!-- Boxes Stepper Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_boxes_label"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_stock_box_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 Box = 3 bl. (90 pills)"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_minus_box"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:text="-1"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card" />
+
+            <TextView
+                android:id="@+id/tv_box_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:gravity="center"
+                android:minWidth="44dp"
+                android:text="3 boxes"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plus_box"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:text="+1"
+                android:textColor="@color/primary_light"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Blisters Stepper Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_blisters_label"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_stock_blister_total_pills"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: 90 pills"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_minus_blister"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:text="-1"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card" />
+
+            <TextView
+                android:id="@+id/tv_blister_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:gravity="center"
+                android:minWidth="44dp"
+                android:text="3 bl."
+                android:textColor="@color/text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plus_blister"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="38dp"
+                android:layout_height="34dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                android:text="+1"
+                android:textColor="@color/primary_light"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="6dp"
+                app:strokeColor="@color/border_card" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Direct Edit Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_stock_direct_edit"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="6dp"
+        android:minWidth="0dp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="0dp"
+        android:text="@string/btn_edit_exact"
+        android:textAllCaps="false"
+        android:textColor="@color/accent_blue"
+        android:textSize="12sp" />
+
+</LinearLayout>

@@ -69,6 +69,15 @@
                     android:orientation="horizontal">
 
                     <ImageButton
+                        android:id="@+id/btn_open_stock"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/stock_management_title"
+                        android:src="@drawable/ic_inventory"
+                        app:tint="@color/text_primary" />
+
+                    <ImageButton
                         android:id="@+id/btn_open_history"
                         android:layout_width="38dp"
                         android:layout_height="38dp"

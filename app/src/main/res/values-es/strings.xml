@@ -104,4 +104,17 @@
     <string name="med_vitamind_sub">Blíster Plateado - 10 Cápsulas - Amarillo</string>
     <string name="dialog_edit_yesterday_title">Editar Base de Ayer</string>
     <string name="dialog_edit_yesterday_msg">Modificá la cantidad de pastillas que quedaron ayer en %s:</string>
+<!-- Stock Management Screen -->
+    <string name="stock_management_title">Gestión de Stock</string>
+    <string name="btn_manage_stock">Stock</string>
+    <string name="stock_boxes_label">Cajas en Reserva</string>
+    <string name="stock_blisters_label">Blísteres de Reserva</string>
+    <string name="stock_loose_label">Pastillas Sueltas</string>
+    <string name="stock_open_blister_action">Abrir Blíster</string>
+    <string name="stock_box_detail_format">1 Caja = %1$d blísteres (%2$d pastillas)</string>
+    <string name="dialog_exact_stock_title">Editar Stock Exacto de %s</string>
+    <string name="dialog_exact_blisters_hint">Blísteres de reserva</string>
+    <string name="dialog_exact_loose_hint">Pastillas sueltas</string>
+    <string name="btn_edit_exact">Editar Exacto</string>
+    <string name="stock_active_status">Blíster activo: %1$d / %2$d pastillas</string>
 </resources>
