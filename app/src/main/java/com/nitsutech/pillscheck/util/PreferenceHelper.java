@@ -18,6 +18,16 @@ public class PreferenceHelper {
     private static final String KEY_LAST_INTAKE_DATE = "last_intake_date";
     private static final String KEY_LAST_INTAKE_TIME = "last_intake_time";
 
+    // Google Tasks Integration Preferences
+    public static final String SYNC_MODE_SINGLE = "single";
+    public static final String SYNC_MODE_INDIVIDUAL = "individual";
+
+    private static final String KEY_GOOGLE_TASKS_ENABLED = "google_tasks_enabled";
+    private static final String KEY_GOOGLE_TASKS_ACCOUNT = "google_tasks_account";
+    private static final String KEY_GOOGLE_TASKS_MODE = "google_tasks_mode";
+    private static final String KEY_GOOGLE_TASKS_GLOBAL_NAME = "google_tasks_global_name";
+    private static final String KEY_GOOGLE_TASKS_MED_PREFIX = "google_tasks_med_";
+
     private final SharedPreferences prefs;
 
     public PreferenceHelper(Context context) {
@@ -110,5 +120,45 @@ public class PreferenceHelper {
 
     public boolean isTakenForDate(String dateStr) {
         return dateStr != null && dateStr.equals(getLastIntakeDate());
+    }
+
+    public boolean isGoogleTasksEnabled() {
+        return prefs.getBoolean(KEY_GOOGLE_TASKS_ENABLED, false);
+    }
+
+    public void setGoogleTasksEnabled(boolean enabled) {
+        prefs.edit().putBoolean(KEY_GOOGLE_TASKS_ENABLED, enabled).apply();
+    }
+
+    public String getGoogleTasksAccount() {
+        return prefs.getString(KEY_GOOGLE_TASKS_ACCOUNT, "");
+    }
+
+    public void setGoogleTasksAccount(String account) {
+        prefs.edit().putString(KEY_GOOGLE_TASKS_ACCOUNT, account).apply();
+    }
+
+    public String getGoogleTasksMode() {
+        return prefs.getString(KEY_GOOGLE_TASKS_MODE, SYNC_MODE_SINGLE);
+    }
+
+    public void setGoogleTasksMode(String mode) {
+        prefs.edit().putString(KEY_GOOGLE_TASKS_MODE, mode).apply();
+    }
+
+    public String getGlobalGoogleTaskName() {
+        return prefs.getString(KEY_GOOGLE_TASKS_GLOBAL_NAME, "Medication");
+    }
+
+    public void setGlobalGoogleTaskName(String name) {
+        prefs.edit().putString(KEY_GOOGLE_TASKS_GLOBAL_NAME, name).apply();
+    }
+
+    public String getMedicationGoogleTaskName(String medKey, String defaultName) {
+        return prefs.getString(KEY_GOOGLE_TASKS_MED_PREFIX + medKey, defaultName);
+    }
+
+    public void setMedicationGoogleTaskName(String medKey, String taskName) {
+        prefs.edit().putString(KEY_GOOGLE_TASKS_MED_PREFIX + medKey, taskName).apply();
     }
 }

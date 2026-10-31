@@ -10,8 +10,8 @@ android {
         applicationId "com.nitsutech.pillscheck"
         minSdk 26
         targetSdk 34
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,6 +42,9 @@ dependencies {
     // Room Database
     implementation 'androidx.room:room-runtime:2.6.1'
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+    // Google Sign-In & Auth for Google Tasks
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
 
     // JSON serializer for blister slot state arrays
     implementation 'com.google.code.gson:gson:2.10.1'

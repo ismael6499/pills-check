@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nitsutech.pillscheck.R;
 import com.nitsutech.pillscheck.data.AppDatabase;
 import com.nitsutech.pillscheck.data.entity.MedicationEntity;
+import com.nitsutech.pillscheck.util.GoogleTasksManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -137,6 +138,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
                 Executors.newSingleThreadExecutor().execute(() -> {
                     AppDatabase.getInstance(context).medicationDao().update(med);
+                    GoogleTasksManager.getInstance(context).onMedicationTaken(med);
                 });
 
                 if (stockListener != null) {

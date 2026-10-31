@@ -74,6 +74,25 @@
     <string name="history_taken_format">Taken on %1$s at %2$s</string>
     <string name="history_pill_detail">%1$s: %2$d pills left in blister</string>
 
+    <!-- Google Tasks Integration -->
+    <string name="settings_google_tasks_header">Google Tasks Sync</string>
+    <string name="settings_google_tasks_enable">Enable Google Tasks Sync</string>
+    <string name="settings_google_tasks_account">Google Account</string>
+    <string name="settings_google_tasks_connected">Connected: %s</string>
+    <string name="settings_google_tasks_not_connected">Not connected</string>
+    <string name="settings_google_tasks_btn_connect">Connect Account</string>
+    <string name="settings_google_tasks_btn_disconnect">Disconnect</string>
+    <string name="settings_google_tasks_mode_title">Sync Mapping Mode</string>
+    <string name="settings_google_tasks_mode_single">Single task for all medications</string>
+    <string name="settings_google_tasks_mode_individual">Individual task per medication</string>
+    <string name="settings_google_tasks_single_hint">Google Task Name</string>
+    <string name="settings_google_tasks_single_desc">Completing this task will sync all daily pills.</string>
+    <string name="settings_google_tasks_individual_desc">Map each medication to its own Google Task name.</string>
+    <string name="settings_google_tasks_sync_now">Sync with Google Tasks</string>
+    <string name="settings_google_tasks_syncing">Syncing tasks...</string>
+    <string name="settings_google_tasks_sync_success">Google Tasks synced successfully</string>
+    <string name="settings_google_tasks_sync_error">Error syncing with Google Tasks</string>
+
     <!-- Medication Default Titles & Subtitles -->
     <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
     <string name="med_folcres_sub">Silver Blister - 30 Tablets - Blue</string>

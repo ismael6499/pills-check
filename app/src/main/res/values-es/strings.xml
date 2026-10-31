@@ -74,6 +74,25 @@
     <string name="history_taken_format">Tomadas el %1$s a las %2$s</string>
     <string name="history_pill_detail">%1$s: %2$d pastillas restantes en el blíster</string>
 
+    <!-- Google Tasks Integration -->
+    <string name="settings_google_tasks_header">Sincronización con Google Tasks</string>
+    <string name="settings_google_tasks_enable">Activar sincronización con Google Tasks</string>
+    <string name="settings_google_tasks_account">Cuenta de Google</string>
+    <string name="settings_google_tasks_connected">Conectado: %s</string>
+    <string name="settings_google_tasks_not_connected">No conectado</string>
+    <string name="settings_google_tasks_btn_connect">Conectar Cuenta</string>
+    <string name="settings_google_tasks_btn_disconnect">Desconectar</string>
+    <string name="settings_google_tasks_mode_title">Modo de Vinculación</string>
+    <string name="settings_google_tasks_mode_single">Una sola tarea para todas las pastillas</string>
+    <string name="settings_google_tasks_mode_individual">Una tarea individual por cada pastilla</string>
+    <string name="settings_google_tasks_single_hint">Nombre de la tarea en Google Tasks</string>
+    <string name="settings_google_tasks_single_desc">Completar esta tarea sincronizará todas las pastillas del día.</string>
+    <string name="settings_google_tasks_individual_desc">Asociá cada medicamento con su respectivo nombre de tarea.</string>
+    <string name="settings_google_tasks_sync_now">Sincronizar con Google Tasks</string>
+    <string name="settings_google_tasks_syncing">Sincronizando tareas...</string>
+    <string name="settings_google_tasks_sync_success">Sincronizado con Google Tasks</string>
+    <string name="settings_google_tasks_sync_error">Error al sincronizar con Google Tasks</string>
+
     <!-- Medication Default Titles & Subtitles -->
     <string name="med_folcres_title">Folcres (Finasteride 1mg)</string>
     <string name="med_folcres_sub">Blíster Plateado - 30 Comprimidos - Azul</string>

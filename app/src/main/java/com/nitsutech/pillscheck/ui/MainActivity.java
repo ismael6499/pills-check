@@ -28,6 +28,7 @@ import com.nitsutech.pillscheck.data.entity.IntakeRecordEntity;
 import com.nitsutech.pillscheck.data.entity.MedicationEntity;
 import com.nitsutech.pillscheck.receiver.NotificationActionReceiver;
 import com.nitsutech.pillscheck.util.AlarmScheduler;
+import com.nitsutech.pillscheck.util.GoogleTasksManager;
 import com.nitsutech.pillscheck.util.LocaleHelper;
 import com.nitsutech.pillscheck.util.PreferenceHelper;
 import com.google.android.material.button.MaterialButton;
@@ -96,6 +97,13 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             registerReceiver(dataChangeReceiver, filter);
         }
         loadDashboardData();
+        if (prefs != null && prefs.isGoogleTasksEnabled()) {
+            GoogleTasksManager.getInstance(this).syncFromGoogleTasks((success, message) -> {
+                if (success) {
+                    loadDashboardData();
+                }
+            });
+        }
     }
 
     @Override
@@ -158,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                 prefs.setLastIntakeDate(todayStr);
                 prefs.setLastIntakeTime(timeStr);
                 AlarmScheduler.scheduleNextReminder(MainActivity.this);
+                GoogleTasksManager.getInstance(MainActivity.this).onAllMedicationsTaken();
             } else if (!allTakenManually && prefs.isTakenForDate(todayStr)) {
                 // If user put a pill back manually, revert status to pending
                 prefs.setLastIntakeDate("");
@@ -246,6 +255,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             prefs.setLastIntakeTime(timeStr);
 
             AlarmScheduler.scheduleNextReminder(MainActivity.this);
+            GoogleTasksManager.getInstance(MainActivity.this).onAllMedicationsTaken();
 
             runOnUiThread(() -> {
                 Toast.makeText(MainActivity.this, R.string.notif_taken_toast, Toast.LENGTH_SHORT).show();
