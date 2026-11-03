@@ -127,17 +127,11 @@ public class StockManagementAdapter extends RecyclerView.Adapter<StockManagement
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.dialog_open_blister_title)
                         .setMessage(context.getString(R.string.dialog_open_blister_msg, med.getBlisterCapacity(), med.getName()))
-                        .setPositiveButton(R.string.dialog_confirm, (dialog, which) -> {
-                            if (med.getReserveBlisters() > 0) {
-                                med.setReserveBlisters(med.getReserveBlisters() - 1);
-                            }
-                            boolean[] newSlots = new boolean[med.getBlisterCapacity()];
-                            for (int i = 0; i < newSlots.length; i++) {
-                                newSlots[i] = true;
-                            }
-                            med.setSlotsArray(newSlots);
-                            med.setYesterdayCount(med.getBlisterCapacity());
-                            saveAndNotify(med);
+                        .setPositiveButton(R.string.dialog_open_blister_taken, (dialog, which) -> {
+                            openReserveBlister(med, true);
+                        })
+                        .setNeutralButton(R.string.dialog_open_blister_pending, (dialog, which) -> {
+                            openReserveBlister(med, false);
                         })
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .show();
@@ -169,6 +163,25 @@ public class StockManagementAdapter extends RecyclerView.Adapter<StockManagement
                 changedIntent.setPackage(context.getPackageName());
                 context.sendBroadcast(changedIntent);
             });
+        }
+
+        private void openReserveBlister(MedicationEntity med, boolean alreadyTakenToday) {
+            if (med.getReserveBlisters() > 0) {
+                med.setReserveBlisters(med.getReserveBlisters() - 1);
+            }
+            boolean[] newSlots = new boolean[med.getBlisterCapacity()];
+            java.util.Arrays.fill(newSlots, true);
+            med.setSlotsArray(newSlots);
+            med.setYesterdayCount(med.getBlisterCapacity());
+
+            com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
+            String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
+            if (alreadyTakenToday) {
+                prefs.setMedicationTakenDate(med.getKey(), todayStr);
+            } else {
+                prefs.setMedicationTakenDate(med.getKey(), "");
+            }
+            saveAndNotify(med);
         }
 
         private void showDirectEditDialog(MedicationEntity med) {

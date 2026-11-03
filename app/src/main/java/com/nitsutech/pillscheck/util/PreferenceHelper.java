@@ -180,4 +180,23 @@ public class PreferenceHelper {
     public void setCurrentDayTracker(String dateStr) {
         prefs.edit().putString(KEY_CURRENT_DAY_TRACKER, dateStr).apply();
     }
+
+    private static final String KEY_MED_TAKEN_PREFIX = "med_taken_date_";
+    private static final String KEY_V1011_RENEWED_FIX = "v1011_renewed_fix_applied";
+
+    public String getMedicationTakenDate(String medKey) {
+        return prefs.getString(KEY_MED_TAKEN_PREFIX + medKey, "");
+    }
+
+    public void setMedicationTakenDate(String medKey, String dateStr) {
+        prefs.edit().putString(KEY_MED_TAKEN_PREFIX + medKey, dateStr).apply();
+    }
+
+    public boolean isV1011RenewedFixApplied() {
+        return prefs.getBoolean(KEY_V1011_RENEWED_FIX, false);
+    }
+
+    public void setV1011RenewedFixApplied(boolean applied) {
+        prefs.edit().putBoolean(KEY_V1011_RENEWED_FIX, applied).apply();
+    }
 }

@@ -32,7 +32,9 @@
 
     <!-- Dialogs -->
     <string name="dialog_open_blister_title">Open Reserve Blister?</string>
-    <string name="dialog_open_blister_msg">This will deduct 1 full blister (%1$d pills) from reserve stock and reload your active blister for %2$s.</string>
+    <string name="dialog_open_blister_msg">Deduct 1 full blister (%1$d pills) from reserve stock for %2$s.\n\nDid you already take today\'s dose from the previous blister?</string>
+    <string name="dialog_open_blister_taken">Yes, Already Taken</string>
+    <string name="dialog_open_blister_pending">No, Still Pending</string>
     <string name="dialog_add_stock_title">Restock %s</string>
     <string name="dialog_add_stock_msg">Choose stock replenishment method:</string>
     <string name="dialog_add_one_box">Add 1 Standard Box (%d pills)</string>

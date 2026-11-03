@@ -336,7 +336,7 @@ public class GoogleTasksManager {
                         int vitDRemaining = 0;
 
                         for (MedicationEntity med : meds) {
-                            if (med.isPendingToday()) {
+                            if (med.isPendingToday(prefs, todayDateStr)) {
                                 med.consumeOnePill();
                                 db.medicationDao().update(med);
                             }
@@ -368,7 +368,7 @@ public class GoogleTasksManager {
                         String taskTitle = prefs.getMedicationGoogleTaskName(med.getKey(), med.getName());
                         boolean taskCompletedToday = isCompletedToday(tasks, taskTitle, todayDateStr);
 
-                        if (taskCompletedToday && med.isPendingToday()) {
+                        if (taskCompletedToday && med.isPendingToday(prefs, todayDateStr)) {
                             med.consumeOnePill();
                             db.medicationDao().update(med);
                             modifiedLocally = true;

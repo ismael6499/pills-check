@@ -225,6 +225,20 @@ public class MedicationEntity {
         return !isTakenToday();
     }
 
+    @Ignore
+    public boolean isTakenToday(com.nitsutech.pillscheck.util.PreferenceHelper prefs, String todayStr) {
+        if (prefs != null) {
+            if (prefs.isTakenForDate(todayStr)) return true;
+            if (todayStr != null && todayStr.equals(prefs.getMedicationTakenDate(key))) return true;
+        }
+        return yesterdayCount > 0 && getActivePillsCount() < yesterdayCount;
+    }
+
+    @Ignore
+    public boolean isPendingToday(com.nitsutech.pillscheck.util.PreferenceHelper prefs, String todayStr) {
+        return !isTakenToday(prefs, todayStr);
+    }
+
     public int getNextSlotToTakeIndex() {
         boolean[] slots = getSlotsArray();
         int bestIndex = -1;

@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
 
     private void loadDashboardData() {
         Executors.newSingleThreadExecutor().execute(() -> {
+            applyV1011DataFixIfNeeded();
             db.medicationDao().removeDuplicateKeys();
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
 
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
             int pendingCount = 0;
             for (MedicationEntity med : meds) {
-                if (med.isPendingToday()) {
+                if (med.isPendingToday(prefs, todayStr)) {
                     pendingCount++;
                 }
             }
@@ -200,6 +201,34 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         });
     }
 
+    private void applyV1011DataFixIfNeeded() {
+        if (!prefs.isV1011RenewedFixApplied()) {
+            MedicationEntity minox = db.medicationDao().getMedicationByKey("minoxidil");
+            if (minox != null) {
+                boolean[] slots = new boolean[10];
+                java.util.Arrays.fill(slots, true);
+                minox.setSlotsArray(slots);
+                minox.setYesterdayCount(10);
+                db.medicationDao().update(minox);
+            }
+            MedicationEntity vitd = db.medicationDao().getMedicationByKey("vitamind");
+            if (vitd != null) {
+                boolean[] slots = new boolean[10];
+                java.util.Arrays.fill(slots, true);
+                vitd.setSlotsArray(slots);
+                vitd.setYesterdayCount(10);
+                db.medicationDao().update(vitd);
+            }
+            IntakeRecordEntity recordNov2 = db.intakeRecordDao().getRecordForDate("2026-11-02");
+            if (recordNov2 != null) {
+                recordNov2.setMinoxidilRemaining(10);
+                recordNov2.setVitaminDRemaining(10);
+                db.intakeRecordDao().insert(recordNov2);
+            }
+            prefs.setV1011RenewedFixApplied(true);
+        }
+    }
+
     private void updateIntakeStatusUI(List<MedicationEntity> meds) {
         String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
         boolean allTakenPref = prefs.isTakenForDate(todayStr);
@@ -208,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
         int pendingCount = 0;
         if (meds != null) {
             for (MedicationEntity med : meds) {
-                if (med.isPendingToday()) {
+                if (med.isPendingToday(prefs, todayStr)) {
                     pendingCount++;
                 }
             }
@@ -278,9 +307,10 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
             int vitDRemaining = 0;
 
             for (MedicationEntity med : meds) {
-                if (med.isPendingToday()) {
+                if (med.isPendingToday(prefs, todayStr)) {
                     med.consumeOnePill();
                     db.medicationDao().update(med);
+                    prefs.setMedicationTakenDate(med.getKey(), todayStr);
                     GoogleTasksManager.getInstance(MainActivity.this).onMedicationTaken(med);
                 }
 
@@ -363,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                             }
                         }
 
+                        for (MedicationEntity med : meds) { prefs.setMedicationTakenDate(med.getKey(), ""); }
                         prefs.setLastIntakeDate("");
                         prefs.setLastIntakeTime("");
                         AlarmScheduler.scheduleNextReminder(MainActivity.this);

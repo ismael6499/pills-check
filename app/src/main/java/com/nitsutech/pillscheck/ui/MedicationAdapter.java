@@ -122,7 +122,7 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
 
             com.nitsutech.pillscheck.util.PreferenceHelper prefs = new com.nitsutech.pillscheck.util.PreferenceHelper(context);
             String todayStr = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).format(new java.util.Date());
-            boolean isCompletedToday = med.isTakenToday() || prefs.isTakenForDate(todayStr);
+            boolean isCompletedToday = med.isTakenToday(prefs, todayStr);
 
             if (cardRoot != null) {
                 if (isCompletedToday) {
@@ -146,6 +146,13 @@ public class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Vi
                 tvBadge.setText(context.getString(R.string.label_active_blister, remainingCount, med.getBlisterCapacity()));
                 tvSupplyDays.setText(context.getString(R.string.label_total_supply, med.getTotalDaysSupply()));
 
+                if (med.getYesterdayCount() > 0) {
+                    if (remainingCount < med.getYesterdayCount()) {
+                        prefs.setMedicationTakenDate(med.getKey(), todayStr);
+                    } else {
+                        prefs.setMedicationTakenDate(med.getKey(), "");
+                    }
+                }
                 Executors.newSingleThreadExecutor().execute(() -> {
                     AppDatabase.getInstance(context).medicationDao().update(med);
                     GoogleTasksManager.getInstance(context).onMedicationTaken(med);

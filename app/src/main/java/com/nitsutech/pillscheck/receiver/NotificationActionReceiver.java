@@ -76,9 +76,10 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             prefs.setLastIntakeSnapshot(new com.google.gson.Gson().toJson(slotSnapshots));
 
             for (MedicationEntity med : meds) {
-                if (med.isPendingToday()) {
+                if (med.isPendingToday(prefs, todayStr)) {
                     med.consumeOnePill();
                     db.medicationDao().update(med);
+                    prefs.setMedicationTakenDate(med.getKey(), todayStr);
                 }
 
                 int remaining = med.getActivePillsCount();

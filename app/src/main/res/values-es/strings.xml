@@ -32,7 +32,9 @@
 
     <!-- Dialogs -->
     <string name="dialog_open_blister_title">¿Abrir Blíster de Reserva?</string>
-    <string name="dialog_open_blister_msg">Esto descontará 1 blíster completo (%1$d pastillas) de tu stock de reserva y recargará el blíster activo de %2$s.</string>
+    <string name="dialog_open_blister_msg">Se descontará 1 blíster completo (%1$d pastillas) de la reserva de %2$s.\n\n¿Ya tomaste la dosis de hoy con el blíster anterior?</string>
+    <string name="dialog_open_blister_taken">Sí, ya la tomé</string>
+    <string name="dialog_open_blister_pending">No, está pendiente</string>
     <string name="dialog_add_stock_title">Reponer %s</string>
     <string name="dialog_add_stock_msg">Elegí cómo ingresar la reposición de stock:</string>
     <string name="dialog_add_one_box">Sumar 1 Caja Estándar (%d pastillas)</string>
