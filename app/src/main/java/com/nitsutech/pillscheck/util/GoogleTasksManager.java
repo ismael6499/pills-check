@@ -112,11 +112,21 @@ public class GoogleTasksManager {
 
     private String getAuthToken() {
         try {
+            android.accounts.Account googleAccount = null;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(context);
-            if (account == null || account.getAccount() == null) {
+            if (account != null && account.getAccount() != null) {
+                googleAccount = account.getAccount();
+            } else {
+                String savedEmail = prefs.getGoogleTasksAccount();
+                if (savedEmail != null && !savedEmail.isEmpty()) {
+                    googleAccount = new android.accounts.Account(savedEmail, "com.google");
+                }
+            }
+            if (googleAccount == null) {
+                Log.w(TAG, "No Google account found for auth token");
                 return null;
             }
-            return GoogleAuthUtil.getToken(context, account.getAccount(), "oauth2:" + TASKS_SCOPE);
+            return GoogleAuthUtil.getToken(context, googleAccount, "oauth2:" + TASKS_SCOPE);
         } catch (Exception e) {
             Log.e(TAG, "Error obtaining auth token", e);
             return null;
@@ -125,6 +135,7 @@ public class GoogleTasksManager {
 
     public static class TaskItem {
         public String id;
+        public String listId = "@default";
         public String title;
         public String status;
         public String completed;
@@ -135,15 +146,56 @@ public class GoogleTasksManager {
         List<TaskItem> list = new ArrayList<>();
         if (token == null) return list;
 
+        fetchTasksForList(token, "@default", list);
+
+        try {
+            URL url = new URL(TASKS_BASE_URL + "/users/@me/lists");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Authorization", "Bearer " + token);
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setConnectTimeout(8000);
+            conn.setReadTimeout(8000);
+
+            if (conn.getResponseCode() >= 200 && conn.getResponseCode() < 300) {
+                InputStream is = conn.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                reader.close();
+                JsonObject json = new Gson().fromJson(sb.toString(), JsonObject.class);
+                if (json.has("items")) {
+                    JsonArray items = json.getAsJsonArray("items");
+                    for (JsonElement el : items) {
+                        JsonObject obj = el.getAsJsonObject();
+                        String listId = obj.has("id") ? obj.get("id").getAsString() : "";
+                        if (!listId.isEmpty() && !"@default".equals(listId)) {
+                            fetchTasksForList(token, listId, list);
+                        }
+                    }
+                }
+            }
+            conn.disconnect();
+        } catch (Exception e) {
+            Log.w(TAG, "Error fetching user task lists: " + e.getMessage());
+        }
+
+        return list;
+    }
+
+    private void fetchTasksForList(String token, String listId, List<TaskItem> output) {
         HttpURLConnection conn = null;
         try {
-            URL url = new URL(TASKS_BASE_URL + "/lists/@default/tasks?showCompleted=true&showHidden=true&maxResults=100");
+            URL url = new URL(TASKS_BASE_URL + "/lists/" + listId + "/tasks?showCompleted=true&showHidden=true&maxResults=100");
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + token);
             conn.setRequestProperty("Accept", "application/json");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(8000);
+            conn.setReadTimeout(8000);
 
             int responseCode = conn.getResponseCode();
             if (responseCode >= 200 && responseCode < 300) {
@@ -162,31 +214,34 @@ public class GoogleTasksManager {
                     for (JsonElement el : items) {
                         JsonObject obj = el.getAsJsonObject();
                         TaskItem item = new TaskItem();
+                        item.listId = listId;
                         item.id = obj.has("id") ? obj.get("id").getAsString() : "";
                         item.title = obj.has("title") ? obj.get("title").getAsString() : "";
                         item.status = obj.has("status") ? obj.get("status").getAsString() : "";
                         item.completed = obj.has("completed") ? obj.get("completed").getAsString() : "";
                         item.updated = obj.has("updated") ? obj.get("updated").getAsString() : "";
-                        list.add(item);
+                        output.add(item);
                     }
                 }
-            } else {
-                Log.w(TAG, "fetchTasks failed with code: " + responseCode);
             }
         } catch (Exception e) {
-            Log.e(TAG, "fetchTasks exception", e);
+            Log.e(TAG, "fetchTasksForList exception for list " + listId, e);
         } finally {
             if (conn != null) conn.disconnect();
         }
-        return list;
     }
 
     public boolean completeTask(String token, String taskId) {
+        return completeTask(token, "@default", taskId);
+    }
+
+    public boolean completeTask(String token, String listId, String taskId) {
         if (token == null || taskId == null || taskId.isEmpty()) return false;
+        String lId = (listId != null && !listId.isEmpty()) ? listId : "@default";
 
         HttpURLConnection conn = null;
         try {
-            URL url = new URL(TASKS_BASE_URL + "/lists/@default/tasks/" + taskId);
+            URL url = new URL(TASKS_BASE_URL + "/lists/" + lId + "/tasks/" + taskId);
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
@@ -197,6 +252,7 @@ public class GoogleTasksManager {
             conn.setReadTimeout(10000);
 
             JsonObject body = new JsonObject();
+            body.addProperty("id", taskId);
             body.addProperty("status", "completed");
 
             byte[] outputBytes = body.toString().getBytes(StandardCharsets.UTF_8);
@@ -206,6 +262,7 @@ public class GoogleTasksManager {
             }
 
             int code = conn.getResponseCode();
+            Log.i(TAG, "completeTask response code: " + code + " for task: " + taskId + " in list: " + lId);
             return code >= 200 && code < 300;
         } catch (Exception e) {
             Log.e(TAG, "completeTask exception", e);
@@ -229,9 +286,10 @@ public class GoogleTasksManager {
                 // If in single mode, verify if all medications are now taken
                 AppDatabase db = AppDatabase.getInstance(context);
                 List<MedicationEntity> allMeds = db.medicationDao().getAllMedications();
+                String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
                 boolean allTaken = true;
                 for (MedicationEntity m : allMeds) {
-                    if (m.getActivePillsCount() >= m.getYesterdayCount()) {
+                    if (m.isPendingToday(prefs, todayStr)) {
                         allTaken = false;
                         break;
                     }
@@ -241,7 +299,7 @@ public class GoogleTasksManager {
                     for (TaskItem item : tasks) {
                         if (item.title != null && item.title.trim().equalsIgnoreCase(taskTitle.trim())
                                 && !"completed".equalsIgnoreCase(item.status)) {
-                            completeTask(token, item.id);
+                            completeTask(token, item.listId, item.id);
                             break;
                         }
                     }
@@ -252,7 +310,7 @@ public class GoogleTasksManager {
                 for (TaskItem item : tasks) {
                     if (item.title != null && item.title.trim().equalsIgnoreCase(taskTitle.trim())
                             && !"completed".equalsIgnoreCase(item.status)) {
-                        completeTask(token, item.id);
+                        completeTask(token, item.listId, item.id);
                         break;
                     }
                 }
@@ -275,7 +333,7 @@ public class GoogleTasksManager {
                 for (TaskItem item : tasks) {
                     if (item.title != null && item.title.trim().equalsIgnoreCase(taskTitle.trim())
                             && !"completed".equalsIgnoreCase(item.status)) {
-                        completeTask(token, item.id);
+                        completeTask(token, item.listId, item.id);
                         break;
                     }
                 }
@@ -287,7 +345,7 @@ public class GoogleTasksManager {
                     for (TaskItem item : tasks) {
                         if (item.title != null && item.title.trim().equalsIgnoreCase(taskTitle.trim())
                                 && !"completed".equalsIgnoreCase(item.status)) {
-                            completeTask(token, item.id);
+                            completeTask(token, item.listId, item.id);
                             break;
                         }
                     }

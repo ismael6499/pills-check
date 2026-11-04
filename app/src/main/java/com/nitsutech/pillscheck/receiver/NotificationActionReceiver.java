@@ -43,7 +43,8 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (ACTION_TAKE_NOW.equals(action)) {
-            handleTakeNow(context, prefs);
+            final PendingResult pendingResult = goAsync();
+            handleTakeNow(context, prefs, pendingResult);
         } else if (ACTION_SNOOZE.equals(action)) {
             AlarmScheduler.scheduleSnooze(context, prefs.getRepeatIntervalMinutes());
             Toast.makeText(context, R.string.notif_snoozed_toast, Toast.LENGTH_SHORT).show();
@@ -56,8 +57,9 @@ public class NotificationActionReceiver extends BroadcastReceiver {
         }
     }
 
-    private void handleTakeNow(Context context, PreferenceHelper prefs) {
+    private void handleTakeNow(Context context, PreferenceHelper prefs, final PendingResult pendingResult) {
         Executors.newSingleThreadExecutor().execute(() -> {
+            try {
             AppDatabase db = AppDatabase.getInstance(context);
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
 
@@ -80,6 +82,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                     med.consumeOnePill();
                     db.medicationDao().update(med);
                     prefs.setMedicationTakenDate(med.getKey(), todayStr);
+                    GoogleTasksManager.getInstance(context).onMedicationTaken(med);
                 }
 
                 int remaining = med.getActivePillsCount();
@@ -104,11 +107,19 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             prefs.setLastIntakeTime(timeStr);
 
             AlarmScheduler.scheduleNextReminder(context);
+            GoogleTasksManager.getInstance(context).onAllMedicationsTaken();
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 Toast.makeText(context, R.string.notif_taken_toast, Toast.LENGTH_SHORT).show();
                 notifyUiChanged(context);
             });
+            } catch (Exception e) {
+                android.util.Log.e("NotificationAction", "Error in handleTakeNow", e);
+            } finally {
+                if (pendingResult != null) {
+                    pendingResult.finish();
+                }
+            }
         });
     }
 
