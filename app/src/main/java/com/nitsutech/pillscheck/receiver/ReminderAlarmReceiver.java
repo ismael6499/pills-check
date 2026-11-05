@@ -61,6 +61,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
         // Action 1: Take Now
         Intent takeIntent = new Intent(context, NotificationActionReceiver.class);
         takeIntent.setAction(NotificationActionReceiver.ACTION_TAKE_NOW);
+        takeIntent.setPackage(context.getPackageName());
         PendingIntent takePendingIntent = PendingIntent.getBroadcast(
                 context, 1, takeIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
@@ -69,6 +70,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
         // Action 2: Snooze 1h
         Intent snoozeIntent = new Intent(context, NotificationActionReceiver.class);
         snoozeIntent.setAction(NotificationActionReceiver.ACTION_SNOOZE);
+        snoozeIntent.setPackage(context.getPackageName());
         PendingIntent snoozePendingIntent = PendingIntent.getBroadcast(
                 context, 2, snoozeIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
@@ -77,6 +79,7 @@ public class ReminderAlarmReceiver extends BroadcastReceiver {
         // Action 3: Silence Today
         Intent silenceIntent = new Intent(context, NotificationActionReceiver.class);
         silenceIntent.setAction(NotificationActionReceiver.ACTION_SILENCE_TODAY);
+        silenceIntent.setPackage(context.getPackageName());
         PendingIntent silencePendingIntent = PendingIntent.getBroadcast(
                 context, 3, silenceIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE

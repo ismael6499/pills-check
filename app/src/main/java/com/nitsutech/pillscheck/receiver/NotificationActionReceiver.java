@@ -82,7 +82,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
                     med.consumeOnePill();
                     db.medicationDao().update(med);
                     prefs.setMedicationTakenDate(med.getKey(), todayStr);
-                    GoogleTasksManager.getInstance(context).onMedicationTaken(med);
+                    try { GoogleTasksManager.getInstance(context).onMedicationTaken(med); } catch (Exception ignored) {}
                 }
 
                 int remaining = med.getActivePillsCount();
@@ -107,7 +107,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
             prefs.setLastIntakeTime(timeStr);
 
             AlarmScheduler.scheduleNextReminder(context);
-            GoogleTasksManager.getInstance(context).onAllMedicationsTaken();
+            try { GoogleTasksManager.getInstance(context).onAllMedicationsTaken(); } catch (Exception ignored) {}
 
             new Handler(Looper.getMainLooper()).post(() -> {
                 Toast.makeText(context, R.string.notif_taken_toast, Toast.LENGTH_SHORT).show();
@@ -125,6 +125,7 @@ public class NotificationActionReceiver extends BroadcastReceiver {
 
     private void notifyUiChanged(Context context) {
         Intent updateIntent = new Intent(ACTION_DATA_CHANGED);
+        updateIntent.setPackage(context.getPackageName());
         context.sendBroadcast(updateIntent);
     }
 }

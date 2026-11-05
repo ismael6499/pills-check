@@ -199,4 +199,14 @@ public class PreferenceHelper {
     public void setV1011RenewedFixApplied(boolean applied) {
         prefs.edit().putBoolean(KEY_V1011_RENEWED_FIX, applied).apply();
     }
+
+    private static final String KEY_V1013_FIX = "v1013_data_fix_applied";
+
+    public boolean isV1013FixApplied() {
+        return prefs.getBoolean(KEY_V1013_FIX, false);
+    }
+
+    public void setV1013FixApplied(boolean applied) {
+        prefs.edit().putBoolean(KEY_V1013_FIX, applied).apply();
+    }
 }

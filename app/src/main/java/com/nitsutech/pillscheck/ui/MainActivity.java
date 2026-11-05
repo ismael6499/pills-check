@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
     private void loadDashboardData() {
         Executors.newSingleThreadExecutor().execute(() -> {
             applyV1011DataFixIfNeeded();
+            applyV1013DataFixIfNeeded();
             db.medicationDao().removeDuplicateKeys();
             List<MedicationEntity> meds = db.medicationDao().getAllMedications();
 
@@ -199,6 +200,86 @@ public class MainActivity extends AppCompatActivity implements MedicationAdapter
                 evaluatePharmacyAlerts(meds);
             });
         });
+    }
+
+    private void applyV1013DataFixIfNeeded() {
+        if (!prefs.isV1013FixApplied()) {
+            prefs.setV1013FixApplied(true);
+
+            // Folcres: set to 7 active pills, yesterdayCount = 8
+            MedicationEntity folcres = db.medicationDao().getMedicationByKey("folcres");
+            if (folcres != null) {
+                boolean[] slots = folcres.getSlotsArray();
+                int count = 0;
+                for (int i = 0; i < slots.length; i++) {
+                    if (slots[i]) {
+                        count++;
+                        if (count > 7) {
+                            slots[i] = false;
+                        }
+                    }
+                }
+                folcres.setSlotsArray(slots);
+                folcres.setYesterdayCount(8);
+                db.medicationDao().update(folcres);
+            }
+
+            // Minoxidil: set to 7 active pills, yesterdayCount = 8
+            MedicationEntity minox = db.medicationDao().getMedicationByKey("minoxidil");
+            if (minox != null) {
+                boolean[] slots = minox.getSlotsArray();
+                int count = 0;
+                for (int i = 0; i < slots.length; i++) {
+                    if (slots[i]) {
+                        count++;
+                        if (count > 7) {
+                            slots[i] = false;
+                        }
+                    }
+                }
+                minox.setSlotsArray(slots);
+                minox.setYesterdayCount(8);
+                db.medicationDao().update(minox);
+            }
+
+            // Vitamin D: set to 7 active pills, yesterdayCount = 8
+            MedicationEntity vitd = db.medicationDao().getMedicationByKey("vitamind");
+            if (vitd != null) {
+                boolean[] slots = vitd.getSlotsArray();
+                int count = 0;
+                for (int i = 0; i < slots.length; i++) {
+                    if (slots[i]) {
+                        count++;
+                        if (count > 7) {
+                            slots[i] = false;
+                        }
+                    }
+                }
+                vitd.setSlotsArray(slots);
+                vitd.setYesterdayCount(8);
+                db.medicationDao().update(vitd);
+            }
+
+            // Mark today as taken
+            String todayStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+            String timeStr = new SimpleDateFormat("HH:mm", Locale.US).format(new Date());
+            prefs.setLastIntakeDate(todayStr);
+            prefs.setLastIntakeTime(timeStr);
+            prefs.setMedicationTakenDate("folcres", todayStr);
+            prefs.setMedicationTakenDate("minoxidil", todayStr);
+            prefs.setMedicationTakenDate("vitamind", todayStr);
+
+            IntakeRecordEntity todayRecord = new IntakeRecordEntity(
+                    System.currentTimeMillis(),
+                    todayStr,
+                    timeStr,
+                    7,
+                    7,
+                    7,
+                    "Notification Action"
+            );
+            db.intakeRecordDao().insert(todayRecord);
+        }
     }
 
     private void applyV1011DataFixIfNeeded() {
